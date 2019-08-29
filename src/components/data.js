@@ -4,9 +4,16 @@ const MOCK_DESCRIPTIONS = [
   `Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`,
 ];
 
-const MOCK_CITIES = [`Kolyma`, `Magadan`, `Yakutsk`, `Norilsk`, `Anadyr`];
+const MOCK_DESTINATIONS = [`Kolyma`, `Magadan`, `Yakutsk`, `Norilsk`, `Anadyr`, `airport`, `hotel`, `museum`];
 
-const pointTypes = [`bus`, `check-in`, `drive`, `flight`, `restaraunt`, `ship`, `sightseeing`, `taxi`, `train`, `transport`, `trip`];
+const pointTypes = [
+  `bus`,
+  `check-in`,
+  `drive`,
+  `flight`,
+  `restaurant`,
+  `ship`,
+  `sightseeing`, `taxi`, `train`, `transport`, `trip`];
 
 const options = [
   {
@@ -45,9 +52,9 @@ const generateRandomArr = (mokdata, maxLength) => {
   return mokArr;
 };
 
-const getTripPoint = () => ({
+const getTripEventData = () => ({
   type: getRandomElement(pointTypes),
-  cityName: getRandomElement(MOCK_CITIES),
+  destinationPoint: getRandomElement(MOCK_DESTINATIONS),
   pics: [
     `http://picsum.photos/300/150?r=${Math.random()}`,
     `http://picsum.photos/300/150?r=${Math.random()}`,
@@ -57,14 +64,20 @@ const getTripPoint = () => ({
   ],
   description: generateRandomArr(MOCK_DESCRIPTIONS, 4).join(``),
   startDate: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
-  _endDate: Date.now() + 1 + Math.floor(Math.random() * 7) * 7 * 24 * 60 * 60 * 1000,
+  endDate: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000 + 1000 * 60 * 20,
   cost: Math.floor(Math.random() * 100),
   options: generateRandomArr(options, 3),
-
-  get endDate() {
-    return this.startDate + (7 * 24 * 60 * 60 * 1000);
-  },
-
 });
 
-export default getTripPoint;
+const getTripDayData = () => {
+  const EVENTS_IN_DAY_COUNT = 4;
+
+  return ({
+    date: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
+    events: new Array(EVENTS_IN_DAY_COUNT).fill(``).map(() => getTripEventData()),
+  });
+};
+
+export default getTripDayData;
+
+
