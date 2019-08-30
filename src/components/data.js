@@ -77,7 +77,6 @@ const getTripDayData = () => {
   const EVENTS_IN_DAY_COUNT = 4;
 
   return ({
-    date: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
     events: new Array(EVENTS_IN_DAY_COUNT).fill(``).map(() => getTripEventData()),
   });
 };

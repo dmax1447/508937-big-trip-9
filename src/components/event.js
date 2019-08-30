@@ -1,6 +1,6 @@
 import getEventOffer from './event-offer.js';
 
-const getTripEvent = ({type, destinationPoint, pics, description, startDate, endDate, cost, offers}) => {
+const getTripEvent = ({type, destinationPoint, startDate, endDate, cost, offers}) => {
   const eventTypeTextMap = new Map([
     [`bus`, `bus to`],
     [`check-in`, `check in`],

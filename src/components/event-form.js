@@ -15,15 +15,7 @@ const getEventForm = ({type, destinationPoint, pics, description, startDate, end
     [`trip`, `trip to`],
   ]);
 
-  const enabledoffers = offers.filter((item) => item.isEnabled);
-  const timeFormat = {hour: `2-digit`, minute: `2-digit`};
   const dateFormat = {hour: `2-digit`, minute: `2-digit`, year: `2-digit`, month: `2-digit`, day: `2-digit`};
-
-  const MINUTE = 1000 * 60;
-  const HOUR = MINUTE * 60;
-  const duration = endDate - startDate;
-  const duraionHours = Math.floor(duration / HOUR);
-  const durationMinutes = Math.round((duration - HOUR * duraionHours) / MINUTE);
 
   return `
   <li class="trip-events__item">
