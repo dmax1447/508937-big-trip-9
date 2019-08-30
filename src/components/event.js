@@ -1,4 +1,6 @@
-const getTripEvent = ({type, destinationPoint, pics, description, startDate, endDate, cost, options}) => {
+import getEventOffer from './event-offer.js';
+
+const getTripEvent = ({type, destinationPoint, pics, description, startDate, endDate, cost, offers}) => {
   const eventTypeTextMap = new Map([
     [`bus`, `bus to`],
     [`check-in`, `check in`],
@@ -13,8 +15,14 @@ const getTripEvent = ({type, destinationPoint, pics, description, startDate, end
     [`trip`, `trip to`],
   ]);
 
+  const enabledoffers = offers.filter((item) => item.isEnabled);
   const timeFormat = {hour: `2-digit`, minute: `2-digit`};
 
+  const MINUTE = 1000 * 60;
+  const HOUR = MINUTE * 60;
+  const duration = endDate - startDate;
+  const duraionHours = Math.floor(duration / HOUR);
+  const durationMinutes = Math.round((duration - HOUR * duraionHours) / MINUTE);
 
   return `
   <li class="trip-events__item">
@@ -30,7 +38,7 @@ const getTripEvent = ({type, destinationPoint, pics, description, startDate, end
           &mdash;
           <time class="event__end-time" datetime="2019-03-18T11:00">${new Date(endDate).toLocaleString(`ru-RU`, timeFormat)}</time>
         </p>
-        <p class="event__duration">1H 30M</p>
+        <p class="event__duration">${duraionHours ? duraionHours + `H` : ``} ${durationMinutes ? durationMinutes + `M` : ``}</p>
       </div>
 
       <p class="event__price">
@@ -39,11 +47,7 @@ const getTripEvent = ({type, destinationPoint, pics, description, startDate, end
 
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        <li class="event__offer">
-          <span class="event__offer-title">Order Uber</span>
-          &plus;
-          &euro;&nbsp;<span class="event__offer-price">20</span>
-          </li>
+        ${enabledoffers.map((option) => getEventOffer(option)).join(``)}
       </ul>
 
       <button class="event__rollup-btn" type="button">

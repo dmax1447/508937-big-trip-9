@@ -6,6 +6,10 @@ const MOCK_DESCRIPTIONS = [
 
 const MOCK_DESTINATIONS = [`Kolyma`, `Magadan`, `Yakutsk`, `Norilsk`, `Anadyr`, `airport`, `hotel`, `museum`];
 
+const MINUTE = 1000 * 60;
+const HOUR = MINUTE * 60;
+const DAY = HOUR * 24;
+
 const pointTypes = [
   `bus`,
   `check-in`,
@@ -15,26 +19,26 @@ const pointTypes = [
   `ship`,
   `sightseeing`, `taxi`, `train`, `transport`, `trip`];
 
-const options = [
+const offers = [
   {
     name: `Add luggage`,
     cost: 10,
-    isEnabled: Math.random() > 0.5,
+    isEnabled: Math.random() >= 0.5,
   },
   {
-    name: `Switch to comfort class`,
+    name: `Switch to comfort`,
     cost: 150,
-    isEnabled: Math.random() > 0.5,
+    isEnabled: Math.random() >= 0.5,
   },
   {
     name: `Add meal`,
     cost: 2,
-    isEnabled: Math.random() > 0.5,
+    isEnabled: Math.random() >= 0.5,
   },
   {
     name: `Choose seats`,
     cost: 9,
-    isEnabled: Math.random() > 0.5,
+    isEnabled: Math.random() >= 0.5,
   },
 ];
 
@@ -63,10 +67,10 @@ const getTripEventData = () => ({
     `http://picsum.photos/300/150?r=${Math.random()}`,
   ],
   description: generateRandomArr(MOCK_DESCRIPTIONS, 4).join(``),
-  startDate: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
-  endDate: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000 + 1000 * 60 * 20,
+  startDate: Date.now() + DAY + 3 * HOUR,
+  endDate: Date.now() + DAY + 3 * HOUR + 2 * HOUR * Math.random(),
   cost: Math.floor(Math.random() * 100),
-  options: generateRandomArr(options, 3),
+  offers: generateRandomArr(offers, 2),
 });
 
 const getTripDayData = () => {
