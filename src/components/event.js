@@ -1,4 +1,5 @@
 import getEventOffer from './event-offer.js';
+import {MILISECONDS_PER_MINUTE, MILISECONDS_PER_HOUR} from './constants.js';
 
 const getTripEvent = ({type, destinationPoint, startDate, endDate, cost, offers}) => {
   const eventTypeTextMap = new Map([
@@ -18,11 +19,10 @@ const getTripEvent = ({type, destinationPoint, startDate, endDate, cost, offers}
   const enabledoffers = offers.filter((item) => item.isEnabled);
   const timeFormat = {hour: `2-digit`, minute: `2-digit`};
 
-  const MINUTE = 1000 * 60;
-  const HOUR = MINUTE * 60;
+
   const duration = endDate - startDate;
-  const duraionHours = Math.floor(duration / HOUR);
-  const durationMinutes = Math.round((duration - HOUR * duraionHours) / MINUTE);
+  const duraionHours = Math.floor(duration / MILISECONDS_PER_HOUR);
+  const durationMinutes = Math.round((duration - MILISECONDS_PER_HOUR * duraionHours) / MILISECONDS_PER_MINUTE);
 
   return `
   <li class="trip-events__item">

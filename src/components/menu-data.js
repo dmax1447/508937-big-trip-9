@@ -1,5 +1,5 @@
 const getMenuData = () => {
-  return ([
+  return [
     {
       name: `Table`,
       isActive: true,
@@ -8,7 +8,7 @@ const getMenuData = () => {
       name: `Stats`,
       isActive: false,
     },
-  ]);
+  ];
 };
 
 export default getMenuData;

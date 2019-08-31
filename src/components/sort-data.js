@@ -1,5 +1,5 @@
 const getSortData = () => {
-  const sortData = [
+  return [
     {
       name: `event`,
       isEnabled: true,
@@ -13,7 +13,6 @@ const getSortData = () => {
       isEnabled: false,
     },
   ];
-  return sortData;
 };
 
 export default getSortData;

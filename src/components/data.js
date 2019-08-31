@@ -1,3 +1,5 @@
+import {MILISECONDS_PER_DAY, MILISECONDS_PER_HOUR} from './constants.js';
+
 const MOCK_DESCRIPTIONS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra.`,
   `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
@@ -6,11 +8,7 @@ const MOCK_DESCRIPTIONS = [
 
 const MOCK_DESTINATIONS = [`Kolyma`, `Magadan`, `Yakutsk`, `Norilsk`, `Anadyr`, `airport`, `hotel`, `museum`];
 
-const MINUTE = 1000 * 60;
-const HOUR = MINUTE * 60;
-const DAY = HOUR * 24;
-
-const pointTypes = [
+const POINT_TYPES = [
   `bus`,
   `check-in`,
   `drive`,
@@ -19,7 +17,7 @@ const pointTypes = [
   `ship`,
   `sightseeing`, `taxi`, `train`, `transport`, `trip`];
 
-const offers = [
+const OFFERS = [
   {
     name: `Add luggage`,
     cost: 10,
@@ -57,7 +55,7 @@ const generateRandomArr = (mokdata, maxLength) => {
 };
 
 const getTripEventData = () => ({
-  type: getRandomElement(pointTypes),
+  type: getRandomElement(POINT_TYPES),
   destinationPoint: getRandomElement(MOCK_DESTINATIONS),
   pics: [
     `http://picsum.photos/300/150?r=${Math.random()}`,
@@ -67,10 +65,10 @@ const getTripEventData = () => ({
     `http://picsum.photos/300/150?r=${Math.random()}`,
   ],
   description: generateRandomArr(MOCK_DESCRIPTIONS, 4).join(``),
-  startDate: Date.now() + DAY + 3 * HOUR,
-  endDate: Date.now() + DAY + 3 * HOUR + 2 * HOUR * Math.random(),
+  startDate: Date.now() + MILISECONDS_PER_DAY + 3 * MILISECONDS_PER_HOUR,
+  endDate: Date.now() + MILISECONDS_PER_DAY + 3 * MILISECONDS_PER_HOUR + 2 * MILISECONDS_PER_HOUR * Math.random(),
   cost: Math.floor(Math.random() * 100),
-  offers: generateRandomArr(offers, 2),
+  offers: generateRandomArr(OFFERS, 2),
 });
 
 const getTripDayData = () => {

@@ -1,5 +1,5 @@
 const getFiltersData = () => {
-  const filterData = [
+  return [
     {
       name: `everything`,
       isEnabled: true,
@@ -12,10 +12,7 @@ const getFiltersData = () => {
       name: `past`,
       isEnabled: false,
     },
-
   ];
-
-  return filterData;
 };
 
 export default getFiltersData;

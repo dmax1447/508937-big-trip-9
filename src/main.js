@@ -32,7 +32,6 @@ const init = () => {
   renderContent(`.trip-events h2`, getSort(sortData), `afterend`);
   renderContent(`.trip-events`, getTripMarkup(), `beforeend`);
   renderContent(`.trip-days`, tripDays, `afterbegin`);
-
 };
 
 init();
