@@ -32,7 +32,7 @@ class TripInfoData {
       <p class="trip-info__dates">${new Date(this._startDate).toLocaleString(`ru-RU`, {month: `short`})} ${new Date(this._startDate).getDate()}&nbsp;&mdash;&nbsp;${new Date(this._endDate).getDate()}</p>
     </div>
     `;
-  };
+  }
 }
 
 export default TripInfoData;

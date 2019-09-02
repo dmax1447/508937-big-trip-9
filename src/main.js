@@ -19,7 +19,7 @@ const renderContent = (selector, content, position = `beforeend`) => {
   element.insertAdjacentHTML(position, content);
 };
 
-const tripInfoContainer = document.querySelector(`.trip-main__trip-info`)
+const tripInfoContainer = document.querySelector(`.trip-main__trip-info`);
 
 const init = () => {
   // массив дней, в каждом дне массив событий
@@ -28,10 +28,8 @@ const init = () => {
     .map(
         () => new Array(EVENTS_IN_DAY_COUNT).fill(``).map(() => new TripEvent())
     );
-  // const tripDays = tripDaysData.map((tripDayData, i) => getTripDay(tripDayData, i + 1));
-  console.log(tripDays);
+  // инфа о поездке
   const tripInfoData = new TripInfoData(tripDays);
-  console.log(tripInfoData);
   console.log(tripInfoData.getElement());
   render(tripInfoContainer, tripInfoData.getElement(), Position.AFTERBEGIN);
   // const menuData = getMenuData();
