@@ -1,45 +1,5 @@
-import {MILISECONDS_PER_DAY, MILISECONDS_PER_HOUR, MILISECONDS_PER_MINUTE} from './constants.js';
 import {createElement} from './utils.js';
-
-const MOCK_DESCRIPTIONS = [
-  `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra.`,
-  `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
-  `Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`,
-];
-
-const MOCK_DESTINATIONS = [`Kolyma`, `Magadan`, `Yakutsk`, `Norilsk`, `Anadyr`, `airport`, `hotel`, `museum`];
-
-const POINT_TYPES = [
-  `bus`,
-  `check-in`,
-  `drive`,
-  `flight`,
-  `restaurant`,
-  `ship`,
-  `sightseeing`, `taxi`, `train`, `transport`, `trip`];
-
-const OFFERS = [
-  {
-    name: `Add luggage`,
-    cost: 10,
-    isEnabled: Math.random() >= 0.5,
-  },
-  {
-    name: `Switch to comfort`,
-    cost: 150,
-    isEnabled: Math.random() >= 0.5,
-  },
-  {
-    name: `Add meal`,
-    cost: 2,
-    isEnabled: Math.random() >= 0.5,
-  },
-  {
-    name: `Choose seats`,
-    cost: 9,
-    isEnabled: Math.random() >= 0.5,
-  },
-];
+import {MILISECONDS_PER_HOUR, MILISECONDS_PER_MINUTE} from './constants.js';
 
 const eventTypeTextMap = new Map([
   [`bus`, `bus to`],
@@ -56,36 +16,16 @@ const eventTypeTextMap = new Map([
 ]);
 
 
-const getRandomElement = (arr) => {
-  const randomIndex = Math.round((arr.length - 1) * Math.random());
-  return arr[randomIndex];
-};
-
-const generateRandomArr = (mokdata, maxLength) => {
-  const arrLength = Math.ceil(Math.random() * maxLength);
-  const mokArr = [];
-  for (let i = 0; i < arrLength; i++) {
-    mokArr.push(getRandomElement(mokdata));
-  }
-  return mokArr;
-};
-
 class TripEvent {
-  constructor() {
-    this._type = getRandomElement(POINT_TYPES);
-    this._destinationPoint = getRandomElement(MOCK_DESTINATIONS);
-    this._pics = [
-      `http://picsum.photos/300/150?r=${Math.random()}`,
-      `http://picsum.photos/300/150?r=${Math.random()}`,
-      `http://picsum.photos/300/150?r=${Math.random()}`,
-      `http://picsum.photos/300/150?r=${Math.random()}`,
-      `http://picsum.photos/300/150?r=${Math.random()}`,
-    ];
-    this._description = generateRandomArr(MOCK_DESCRIPTIONS, 4).join(``);
-    this._startDate = Date.now() + MILISECONDS_PER_DAY + 3 * MILISECONDS_PER_HOUR;
-    this._endDate = Date.now() + MILISECONDS_PER_DAY + 3 * MILISECONDS_PER_HOUR + 2 * MILISECONDS_PER_HOUR * Math.random();
-    this._cost = Math.floor(Math.random() * 100);
-    this._offers = generateRandomArr(OFFERS, 2);
+  constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers}) {
+    this._type = type;
+    this._destinationPoint = destinationPoint;
+    this._pics = pics;
+    this._description = description;
+    this._startDate = startDate;
+    this._endDate = endDate;
+    this._cost = cost;
+    this._offers = offers;
     this._element = null;
   }
 
@@ -149,6 +89,10 @@ class TripEvent {
     }
 
     return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
   }
 }
 

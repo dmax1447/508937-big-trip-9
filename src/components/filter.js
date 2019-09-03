@@ -45,6 +45,10 @@ class Filter {
     }
     return this._element;
   }
+
+  removeElement() {
+    this._element = null;
+  }
 }
 
 export default Filter;

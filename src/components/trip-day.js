@@ -1,4 +1,6 @@
-import {createElement, render, Position} from './utils.js';
+import {createElement, render, Position, unrender} from './utils.js';
+import TripEvent from './trip-event';
+import TripEventForm from './trip-event-form.js';
 
 const dateFormatShort = {
   month: `short`,
@@ -10,7 +12,7 @@ class TripDay {
     this._events = events;
     this._day = day;
     this._element = null;
-    const dayDate = new Date(events[0]._startDate);
+    const dayDate = new Date(events[0].startDate);
     this._date = dayDate.toLocaleString(`en-US`, dateFormatShort);
     this._dateTime = dayDate.toISOString();
   }
@@ -33,10 +35,25 @@ class TripDay {
       this._element = createElement(this.getTemplate());
       const eventsContainer = this._element.querySelector(`.trip-events__list`);
       this._events.forEach((event) => {
-        render(eventsContainer, event.getElement(), Position.AFTERBEGIN);
+        const eventElement = new TripEvent(event).getElement();
+
+        const showEventForm = () => {
+          const eventElementForm = new TripEventForm(event).getElement();
+          // console.log(eventElementForm);
+          render(eventsContainer, eventElementForm, Position.AFTERBEGIN);
+          unrender(eventElement);
+        };
+
+        const openBtn = eventElement.querySelector(`.event__rollup-btn`);
+        openBtn.addEventListener(`click`, showEventForm);
+        render(eventsContainer, eventElement, Position.AFTERBEGIN);
       });
     }
     return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
   }
 }
 

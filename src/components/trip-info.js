@@ -8,18 +8,18 @@ const MIDDLE_POINT_EMPTY_MARK = `&mdash; ... &mdash;`;
 class TripInfoData {
   constructor(tripData) {
     this._cities = tripData.reduce((acc, day) => {
-      const dayCities = day.reduce((acc2, event) => [...acc2, event._destinationPoint], []);
+      const dayCities = day.reduce((acc2, event) => [...acc2, event.destinationPoint], []);
       return [...acc, ...dayCities];
     }, []);
 
     this._totalCost = tripData.reduce((acc, day) => {
-      const dayCost = day.reduce((acc2, event) => acc2 + event._cost, 0);
+      const dayCost = day.reduce((acc2, event) => acc2 + event.cost, 0);
       return acc + dayCost;
     }, 0);
 
-    this._startDate = tripData[0][0]._startDate;
+    this._startDate = tripData[0][0].startDate;
     const lastEventIndex = tripData[tripData.length - 1].length - 1;
-    this._endDate = tripData[tripData.length - 1][lastEventIndex]._endDate;
+    this._endDate = tripData[tripData.length - 1][lastEventIndex].endDate;
     this._element = null;
   }
 
@@ -37,6 +37,10 @@ class TripInfoData {
       <p class="trip-info__dates">${new Date(this._startDate).toLocaleString(LOCALE, LOCALE_FORMAT)} ${new Date(this._startDate).getDate()}&nbsp;&mdash;&nbsp;${new Date(this._endDate).getDate()}</p>
     </div>
     `.trim();
+  }
+
+  removeElement() {
+    this._element = null;
   }
 }
 
