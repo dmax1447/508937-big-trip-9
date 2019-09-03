@@ -1,6 +1,6 @@
 import {createElement, render, Position} from './utils.js';
 
-const dateFormat = {
+const dateFormatShort = {
   month: `short`,
   day: `2-digit`,
 };
@@ -10,8 +10,9 @@ class TripDay {
     this._events = events;
     this._day = day;
     this._element = null;
-    this._date = new Date(events[0]._startDate).toLocaleString(`en-US`, dateFormat);
-    this._dateTime = new Date(events[0].startDate).toLocaleString();
+    const dayDate = new Date(events[0]._startDate);
+    this._date = dayDate.toLocaleString(`en-US`, dateFormatShort);
+    this._dateTime = dayDate.toISOString();
   }
 
   getTemplate() {
