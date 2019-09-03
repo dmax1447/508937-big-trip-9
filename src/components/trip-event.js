@@ -41,6 +41,21 @@ const OFFERS = [
   },
 ];
 
+const eventTypeTextMap = new Map([
+  [`bus`, `bus to`],
+  [`check-in`, `check in`],
+  [`drive`, `drive to`],
+  [`flight`, `fly to`],
+  [`restaurant`, `dinner at`],
+  [`ship`, `sail to`],
+  [`sightseeing`, `take a look of`],
+  [`taxi`, `taxi to`],
+  [`train`, `train to`],
+  [`transport`, `transport to`],
+  [`trip`, `trip to`],
+]);
+
+
 const getRandomElement = (arr) => {
   const randomIndex = Math.round((arr.length - 1) * Math.random());
   return arr[randomIndex];
@@ -75,26 +90,24 @@ class TripEvent {
   }
 
   getTemplate() {
-    // мапа для отображение текста о событии по его типу
-    const eventTypeTextMap = new Map([
-      [`bus`, `bus to`],
-      [`check-in`, `check in`],
-      [`drive`, `drive to`],
-      [`flight`, `fly to`],
-      [`restaurant`, `dinner at`],
-      [`ship`, `sail to`],
-      [`sightseeing`, `take a look of`],
-      [`taxi`, `taxi to`],
-      [`train`, `train to`],
-      [`transport`, `transport to`],
-      [`trip`, `trip to`],
-    ]);
-
+    const LOCALE = `en-US`;
+    const TIME_FORMAT = {hour: `2-digit`, minute: `2-digit`};
+    const JOIN_SYMBOL = ``;
     const enabledoffers = this._offers.filter((item) => item.isEnabled);
-    const timeFormat = {hour: `2-digit`, minute: `2-digit`};
     const duration = this._endDate - this._startDate;
     const duraionHours = Math.floor(duration / MILISECONDS_PER_HOUR);
     const durationMinutes = Math.round((duration - MILISECONDS_PER_HOUR * duraionHours) / MILISECONDS_PER_MINUTE);
+
+
+    const getOfferTemplate = (offer) => {
+      return `
+      <li class="event__offer">
+        <span class="event__offer-title">${offer.name}</span>
+        &plus;
+        &euro;&nbsp;<span class="event__offer-price">${offer.cost}</span>
+      </li>
+      `.trim();
+    };
 
     return `
     <li class="trip-events__item">
@@ -106,9 +119,9 @@ class TripEvent {
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T10:30">${new Date(this._startDate).toLocaleString(`ru-RU`, timeFormat)}</time>
+            <time class="event__start-time" datetime="2019-03-18T10:30">${new Date(this._startDate).toLocaleString(LOCALE, TIME_FORMAT)}</time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-18T11:00">${new Date(this._endDate).toLocaleString(`ru-RU`, timeFormat)}</time>
+            <time class="event__end-time" datetime="2019-03-18T11:00">${new Date(this._endDate).toLocaleString(LOCALE, TIME_FORMAT)}</time>
           </p>
           <p class="event__duration">${duraionHours ? duraionHours + `H` : ``} ${durationMinutes ? durationMinutes + `M` : ``}</p>
         </div>
@@ -119,13 +132,7 @@ class TripEvent {
 
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${enabledoffers.map((offer) => `
-          <li class="event__offer">
-            <span class="event__offer-title">${offer.name}</span>
-            &plus;
-            &euro;&nbsp;<span class="event__offer-price">${offer.cost}</span>
-          </li>
-          `).join(``)}
+          ${enabledoffers.map((offer) => getOfferTemplate(offer)).join(JOIN_SYMBOL)}
         </ul>
 
         <button class="event__rollup-btn" type="button">
@@ -133,7 +140,7 @@ class TripEvent {
         </button>
       </div>
     </li>
-    `;
+    `.trim();
   }
 
   getElement() {

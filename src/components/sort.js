@@ -1,36 +1,67 @@
-const getSort = (sortState) => {
-  return `
-  <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-    <span class="trip-sort__item  trip-sort__item--day">Day</span>
+import {createElement} from './utils.js';
 
-    <div class="trip-sort__item  trip-sort__item--event">
-      <input id="sort-event" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-event" ${sortState[0].isEnabled ? `checked` : ``}>
-      <label class="trip-sort__btn" for="sort-event">Event</label>
-    </div>
 
-    <div class="trip-sort__item  trip-sort__item--time">
-      <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" ${sortState[1].isEnabled ? `checked` : ``}>
-      <label class="trip-sort__btn" for="sort-time">
-        Time
-        <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
-          <path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"/>
-        </svg>
-      </label>
-    </div>
+class Sort {
+  constructor() {
+    this._items = [
+      {
+        name: `event`,
+        isEnabled: true,
+      },
+      {
+        name: `time`,
+        isEnabled: false,
+      },
+      {
+        name: `price`,
+        isEnabled: false,
+      },
+    ];
+    this._element = null;
+  }
 
-    <div class="trip-sort__item  trip-sort__item--price">
-      <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" ${sortState[2].isEnabled ? `checked` : ``}>
-      <label class="trip-sort__btn" for="sort-price">
-        Price
-        <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
-          <path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"/>
-        </svg>
-      </label>
-    </div>
+  getTemplate() {
+    return `
+    <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+      <span class="trip-sort__item  trip-sort__item--day">Day</span>
 
-    <span class="trip-sort__item  trip-sort__item--offers">Offers</span>
-  </form>
-  `;
-};
+      <div class="trip-sort__item  trip-sort__item--event">
+        <input id="sort-event" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-event" ${this._items[0].isEnabled ? `checked` : ``}>
+        <label class="trip-sort__btn" for="sort-event">Event</label>
+      </div>
 
-export default getSort;
+      <div class="trip-sort__item  trip-sort__item--time">
+        <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" ${this._items[1].isEnabled ? `checked` : ``}>
+        <label class="trip-sort__btn" for="sort-time">
+          Time
+          <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
+            <path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"/>
+          </svg>
+        </label>
+      </div>
+
+      <div class="trip-sort__item  trip-sort__item--price">
+        <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" ${this._items[2].isEnabled ? `checked` : ``}>
+        <label class="trip-sort__btn" for="sort-price">
+          Price
+          <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
+            <path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"/>
+          </svg>
+        </label>
+      </div>
+
+      <span class="trip-sort__item  trip-sort__item--offers">Offers</span>
+    </form>
+    `.trim();
+  }
+
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+}
+
+export default Sort;
