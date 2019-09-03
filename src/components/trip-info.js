@@ -1,4 +1,9 @@
 import {createElement} from './utils.js';
+const LOCALE = `en-US`;
+const LOCALE_FORMAT = {
+  month: `short`,
+};
+const MIDDLE_POINT_EMPTY_MARK = `&mdash; ... &mdash;`;
 
 class TripInfoData {
   constructor(tripData) {
@@ -28,10 +33,10 @@ class TripInfoData {
   getTemplate() {
     return `
     <div class="trip-info__main">
-      <h1 class="trip-info__title">${this._cities[0]} ${this._cities.length > 3 ? `&mdash; ... &mdash;` : this._cities[1]} ${this._cities[this._cities.length - 1]}</h1>
-      <p class="trip-info__dates">${new Date(this._startDate).toLocaleString(`ru-RU`, {month: `short`})} ${new Date(this._startDate).getDate()}&nbsp;&mdash;&nbsp;${new Date(this._endDate).getDate()}</p>
+      <h1 class="trip-info__title">${this._cities[0]} ${this._cities.length > 3 ? MIDDLE_POINT_EMPTY_MARK : this._cities[1]} ${this._cities[this._cities.length - 1]}</h1>
+      <p class="trip-info__dates">${new Date(this._startDate).toLocaleString(LOCALE, LOCALE_FORMAT)} ${new Date(this._startDate).getDate()}&nbsp;&mdash;&nbsp;${new Date(this._endDate).getDate()}</p>
     </div>
-    `;
+    `.trim();
   }
 }
 
