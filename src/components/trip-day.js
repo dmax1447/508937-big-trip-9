@@ -30,7 +30,7 @@ class TripDay {
     `.trim();
   }
 
-  getElement() {
+  getElement(formState) {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
       const eventsContainer = this._element.querySelector(`.trip-events__list`);
@@ -41,11 +41,16 @@ class TripDay {
         const closeBtn = eventElementForm.querySelector(`.event__rollup-btn`);
 
         const onBtnOpenFormClick = () => {
+          if (formState.isActive) {
+            return;
+          }
           eventsContainer.replaceChild(eventElementForm, eventElement);
+          formState.isActive = true;
         };
 
         const onBtnCloseFormClick = () => {
           eventsContainer.replaceChild(eventElement, eventElementForm);
+          formState.isActive = false;
         };
 
         openBtn.addEventListener(`click`, onBtnOpenFormClick);

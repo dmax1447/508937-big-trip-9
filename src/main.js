@@ -55,13 +55,16 @@ const renderSort = () => {
  * @param {Array} tripDays массив дней с событиями
  */
 const renderTripDays = (tripDays) => {
+  const formState = {
+    isActive: false,
+  };
   const tripDaysContainer = createElement(`<ul class="trip-days"></ul>`);
   const tripEventsContainer = document.querySelector(`.trip-events`);
   render(tripEventsContainer, tripDaysContainer, Position.BEFOREEND);
   // рендерим дни с событиями в контейнер
   for (let i = 0; i < tripDays.length; i++) {
     const tripDay = new TripDay(tripDays[i], i + 1);
-    render(tripDaysContainer, tripDay.getElement(), Position.BEFOREEND);
+    render(tripDaysContainer, tripDay.getElement(formState), Position.BEFOREEND);
   }
 };
 
