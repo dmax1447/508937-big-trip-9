@@ -17,10 +17,10 @@ const EVENTS_IN_DAY_COUNT = 4;
  * @param {Array} tripDays массив дней с данными
  */
 const renderTripInfo = (tripDays) => {
-  const tripInfoData = new TripInfo(tripDays);
+  const tripInfo = new TripInfo(tripDays);
   const tripInfoContainer = document.querySelector(`.trip-main__trip-info`);
-  render(tripInfoContainer, tripInfoData.getElement(), Position.AFTERBEGIN);
-  document.querySelector(`.trip-info__cost-value`).textContent = tripInfoData._totalCost;
+  render(tripInfoContainer, tripInfo.getElement(), Position.AFTERBEGIN);
+  document.querySelector(`.trip-info__cost-value`).textContent = tripInfo._totalCost;
 };
 
 /**

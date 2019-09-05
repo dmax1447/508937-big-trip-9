@@ -7,7 +7,7 @@ const MIDDLE_POINT_EMPTY_MARK = `&mdash; ... &mdash;`;
 class TripInfo {
   constructor(tripData) {
     this._cities = tripData.reduce((acc, day) => {
-      const dayCities = day.reduce((acc2, event) => [...acc2, event.destinationPoint], []);
+      const dayCities = day.reduce((acc2, event) => [event.destinationPoint, ...acc2], []);
       return [...acc, ...dayCities];
     }, []);
 
