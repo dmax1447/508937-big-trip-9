@@ -36,15 +36,20 @@ class TripDay {
       const eventsContainer = this._element.querySelector(`.trip-events__list`);
       this._events.forEach((event) => {
         const eventElement = new TripEvent(event).getElement();
+        const eventElementForm = new TripEventForm(event).getElement();
+        const openBtn = eventElement.querySelector(`.event__rollup-btn`);
+        const closeBtn = eventElementForm.querySelector(`.event__rollup-btn`);
 
-        const showEventForm = () => {
-          const eventElementForm = new TripEventForm(event).getElement();
-          render(eventsContainer, eventElementForm, Position.AFTERBEGIN);
-          unrender(eventElement);
+        const onBtnOpenFormClick = () => {
+          eventsContainer.replaceChild(eventElementForm, eventElement);
         };
 
-        const openBtn = eventElement.querySelector(`.event__rollup-btn`);
-        openBtn.addEventListener(`click`, showEventForm);
+        const onBtnCloseFormClick = () => {
+          eventsContainer.replaceChild(eventElement, eventElementForm);
+        };
+
+        openBtn.addEventListener(`click`, onBtnOpenFormClick);
+        closeBtn.addEventListener(`click`, onBtnCloseFormClick);
         render(eventsContainer, eventElement, Position.AFTERBEGIN);
       });
     }
