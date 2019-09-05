@@ -1,7 +1,6 @@
 import {createElement} from './utils.js';
 
 const getTab = (tab) => `<a class="trip-tabs__btn ${tab.isActive ? `trip-tabs__btn--active` : ``} href="#">${tab.name}</a>`;
-const JOIN_SYMBOL = ``;
 
 class Menu {
   constructor() {
@@ -12,7 +11,7 @@ class Menu {
   getTemplate() {
     return `
     <nav class="trip-controls__trip-tabs  trip-tabs">
-      ${this._items.map((item) => getTab(item)).join(JOIN_SYMBOL)}
+      ${this._items.map((item) => getTab(item)).join(``)}
     </nav>
     `.trim();
   }

@@ -1,5 +1,5 @@
 import {createElement} from './utils.js';
-import {MILISECONDS_PER_HOUR, MILISECONDS_PER_MINUTE} from './constants.js';
+import {MILISECONDS_PER_HOUR, MILISECONDS_PER_MINUTE, LOCALE} from './constants.js';
 
 const eventTypeTextMap = new Map([
   [`bus`, `bus to`],
@@ -14,6 +14,16 @@ const eventTypeTextMap = new Map([
   [`transport`, `transport to`],
   [`trip`, `trip to`],
 ]);
+
+const getOfferTemplate = (offer) => {
+  return `
+  <li class="event__offer">
+    <span class="event__offer-title">${offer.name}</span>
+    &plus;
+    &euro;&nbsp;<span class="event__offer-price">${offer.cost}</span>
+  </li>
+  `.trim();
+};
 
 
 class TripEvent {
@@ -30,24 +40,12 @@ class TripEvent {
   }
 
   getTemplate() {
-    const LOCALE = `en-US`;
     const TIME_FORMAT = {hour: `2-digit`, minute: `2-digit`};
     const JOIN_SYMBOL = ``;
     const enabledoffers = this._offers.filter((item) => item.isEnabled);
     const duration = this._endDate - this._startDate;
     const duraionHours = Math.floor(duration / MILISECONDS_PER_HOUR);
     const durationMinutes = Math.round((duration - MILISECONDS_PER_HOUR * duraionHours) / MILISECONDS_PER_MINUTE);
-
-
-    const getOfferTemplate = (offer) => {
-      return `
-      <li class="event__offer">
-        <span class="event__offer-title">${offer.name}</span>
-        &plus;
-        &euro;&nbsp;<span class="event__offer-price">${offer.cost}</span>
-      </li>
-      `.trim();
-    };
 
     return `
     <li class="trip-events__item">

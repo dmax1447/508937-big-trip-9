@@ -39,7 +39,6 @@ class TripDay {
 
         const showEventForm = () => {
           const eventElementForm = new TripEventForm(event).getElement();
-          // console.log(eventElementForm);
           render(eventsContainer, eventElementForm, Position.AFTERBEGIN);
           unrender(eventElement);
         };

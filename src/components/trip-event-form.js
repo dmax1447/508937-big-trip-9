@@ -1,4 +1,5 @@
 import {createElement} from './utils.js';
+import {LOCALE} from './constants.js';
 
 const eventTypeTextMap = new Map([
   [`bus`, `bus to`],
@@ -14,6 +15,18 @@ const eventTypeTextMap = new Map([
   [`trip`, `trip to`],
 ]);
 
+const getEventOfferSelector = ({name, cost, isEnabled}) => {
+  return `
+  <div class="event__offer-selector">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}" type="checkbox" name="event-offer-luggage" ${isEnabled ? `checked` : ``}>
+    <label class="event__offer-label" for="event-offer-${name}">
+      <span class="event__offer-title">${name}</span>
+      &plus;
+      &euro;&nbsp;<span class="event__offer-price">${cost}</span>
+    </label>
+  </div>
+  `.trim();
+};
 
 class TripEventForm {
   constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers}) {
@@ -29,24 +42,7 @@ class TripEventForm {
   }
 
   getTemplate() {
-    const LOCALE = `en-US`;
-    const JOIN_SYMBOL = ``;
     const dateFormat = {hour: `2-digit`, minute: `2-digit`, year: `2-digit`, month: `2-digit`, day: `2-digit`};
-
-
-    const getEventOfferSelector = ({name, cost, isEnabled}) => {
-      return `
-      <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}" type="checkbox" name="event-offer-luggage" ${isEnabled ? `checked` : ``}>
-        <label class="event__offer-label" for="event-offer-${name}">
-          <span class="event__offer-title">${name}</span>
-          &plus;
-          &euro;&nbsp;<span class="event__offer-price">${cost}</span>
-        </label>
-      </div>
-      `.trim();
-    };
-
     return `
     <li class="trip-events__item">
       <form class="event  event--edit" action="#" method="post">
@@ -173,7 +169,7 @@ class TripEventForm {
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
             <div class="event__available-offers">
-              ${this._offers.map((offer) => getEventOfferSelector(offer)).join(JOIN_SYMBOL)}
+              ${this._offers.map((offer) => getEventOfferSelector(offer)).join(``)}
             </div>
           </section>
 

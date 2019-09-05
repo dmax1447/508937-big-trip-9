@@ -1,11 +1,10 @@
 import {createElement} from './utils.js';
-const LOCALE = `en-US`;
-const LOCALE_FORMAT = {
-  month: `short`,
-};
+import {LOCALE} from './constants.js';
+
+const LOCALE_FORMAT = {month: `short`};
 const MIDDLE_POINT_EMPTY_MARK = `&mdash; ... &mdash;`;
 
-class TripInfoData {
+class TripInfo {
   constructor(tripData) {
     this._cities = tripData.reduce((acc, day) => {
       const dayCities = day.reduce((acc2, event) => [...acc2, event.destinationPoint], []);
@@ -44,4 +43,4 @@ class TripInfoData {
   }
 }
 
-export default TripInfoData;
+export default TripInfo;
