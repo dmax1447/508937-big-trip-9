@@ -42,7 +42,7 @@ class TripEventForm {
   }
 
   getTemplate() {
-    const dateFormat = {hour: `2-digit`, minute: `2-digit`, year: `2-digit`, month: `2-digit`, day: `2-digit`};
+    const dateFormat = {hour12: false, hour: `2-digit`, minute: `2-digit`, year: `2-digit`, month: `2-digit`, day: `2-digit`};
     return `
     <li class="trip-events__item">
       <form class="event  event--edit" action="#" method="post">
