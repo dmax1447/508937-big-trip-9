@@ -1,4 +1,4 @@
-import {createElement, render, Position, unrender} from './utils.js';
+import {createElement, render, Position} from './utils.js';
 import TripEvent from './trip-event';
 import TripEventForm from './trip-event-form.js';
 
