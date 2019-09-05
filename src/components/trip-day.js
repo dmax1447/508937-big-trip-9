@@ -53,8 +53,15 @@ class TripDay {
           formState.isActive = false;
         };
 
+        const onFormSubmit = (evt) => {
+          evt.preventDefault();
+          eventsContainer.replaceChild(eventElement, eventElementForm);
+          formState.isActive = false;
+        };
+
         openBtn.addEventListener(`click`, onBtnOpenFormClick);
         closeBtn.addEventListener(`click`, onBtnCloseFormClick);
+        eventElementForm.addEventListener(`submit`, onFormSubmit);
         render(eventsContainer, eventElement, Position.AFTERBEGIN);
       });
     }
