@@ -1,37 +1,83 @@
-import getTripInfo from '../src/components/trip-info.js';
-import getMenu from '../src/components/menu.js';
-import getFilters from '../src/components/filters.js';
-import getSort from '../src/components/sort.js';
-import getTripMarkup from '../src/components/trip-content.js';
-import getTripDay from '../src/components/trip-day.js';
-import getTripDayData from '../src/components/data.js';
-import getMenuData from '../src/components/menu-data.js';
-import getTripInfoData from '../src/components/trip-info-data.js';
-import getFiltersData from '../src/components/filters-data.js';
-import getSortData from '../src/components/sort-data.js';
+
+import getTripEventData from './components/event-data';
+import Menu from './components/menu.js';
+import TripInfo from './components/trip-info.js';
+import Filter from './components/filter.js';
+import Sort from './components/sort.js';
+import TripDay from './components/trip-day.js';
+
+import {render, createElement} from './components/utils.js';
+import {Position} from './components/constants.js';
 
 
 const DAYS_COUNT = 3;
+const EVENTS_IN_DAY_COUNT = 4;
 
-const renderContent = (selector, content, position = `beforeend`) => {
-  const element = document.querySelector(selector);
-  element.insertAdjacentHTML(position, content);
+/**
+ * подготовка и рендер информации о поездке
+ * @param {Array} tripDays массив дней с данными
+ */
+const renderTripInfo = (tripDays) => {
+  const tripInfo = new TripInfo(tripDays);
+  const tripInfoContainer = document.querySelector(`.trip-main__trip-info`);
+  render(tripInfoContainer, tripInfo.getElement(), Position.AFTERBEGIN);
+  document.querySelector(`.trip-info__cost-value`).textContent = tripInfo._totalCost;
 };
 
+/**
+ * Рендер меню
+ */
+const renderMenu = () => {
+  const menu = new Menu();
+  const menuContainer = document.querySelector(`.trip-main__trip-controls`);
+  render(menuContainer, menu.getElement(), Position.BEFOREEND);
+};
+
+/**
+ * Рендер блока фильтров
+ */
+const renderFilter = () => {
+  const filter = new Filter();
+  const filterContainer = document.querySelector(`.trip-main__trip-controls`);
+  render(filterContainer, filter.getElement(), Position.BEFOREEND);
+};
+
+/**
+ * рендер сортировка
+ */
+const renderSort = () => {
+  const sort = new Sort();
+  const tripSortContainer = document.querySelector(`.trip-events`);
+  render(tripSortContainer, sort.getElement(), Position.BEFOREEND);
+};
+
+/**
+ * рендер событий поездки
+ * @param {Array} tripDays массив дней с событиями
+ */
+const renderTripDays = (tripDays) => {
+  const formState = {
+    isActive: false,
+  };
+  const tripDaysContainer = createElement(`<ul class="trip-days"></ul>`);
+  const tripEventsContainer = document.querySelector(`.trip-events`);
+  render(tripEventsContainer, tripDaysContainer, Position.BEFOREEND);
+  // рендерим дни с событиями в контейнер
+  for (let i = 0; i < tripDays.length; i++) {
+    const tripDay = new TripDay(tripDays[i], i + 1);
+    render(tripDaysContainer, tripDay.getElement(formState), Position.BEFOREEND);
+  }
+};
+
+
 const init = () => {
-  const tripDaysData = new Array(DAYS_COUNT).fill(``).map(() => getTripDayData());
-  const tripDays = tripDaysData.map((tripDayData, i) => getTripDay(tripDayData, i + 1));
-  const menuData = getMenuData();
-  const tripInfoData = getTripInfoData(tripDaysData);
-  const filtersData = getFiltersData();
-  const sortData = getSortData();
-  document.querySelector(`.trip-info__cost-value`).textContent = tripInfoData.totalCost;
-  renderContent(`.trip-main__trip-info`, getTripInfo(tripInfoData), `afterbegin`);
-  renderContent(`.trip-main__trip-controls h2`, getMenu(menuData), `afterend`);
-  renderContent(`.trip-main__trip-controls`, getFilters(filtersData), `beforeend`);
-  renderContent(`.trip-events h2`, getSort(sortData), `afterend`);
-  renderContent(`.trip-events`, getTripMarkup(), `beforeend`);
-  renderContent(`.trip-days`, tripDays, `afterbegin`);
+  // готовим исходные данные, массив дней, в каждом дне массив событий
+  const tripDays = new Array(DAYS_COUNT).fill(``).map(() => new Array(EVENTS_IN_DAY_COUNT).fill(``).map(() => getTripEventData()));
+  renderTripInfo(tripDays);
+  renderMenu();
+  renderFilter();
+  renderSort();
+  renderTripDays(tripDays);
 };
 
 init();

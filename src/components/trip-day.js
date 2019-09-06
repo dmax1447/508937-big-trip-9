@@ -1,26 +1,72 @@
-import getTripEvent from './event.js';
-import getTripEventForm from './event-form.js';
+import {createElement, render} from './utils.js';
+import {LOCALE, DAY_DATE_FORMAT, Position} from './constants.js';
+import TripEvent from './trip-event';
+import TripEventForm from './trip-event-form.js';
 
-const getTripDay = ({events}, day) => {
+class TripDay {
+  constructor(events, day) {
+    this._events = events;
+    this._day = day;
+    this._element = null;
+    const dayDate = new Date(events[0].startDate);
+    this._date = dayDate.toLocaleString(LOCALE, DAY_DATE_FORMAT);
+    this._dateTime = dayDate.toISOString();
+  }
 
-  const eventsMarkup = events.map(((event, i) => (day === 1 && i === 0) ? getTripEventForm(event) : getTripEvent(event)));
-  const dateFormat = {
-    month: `short`,
-    day: `2-digit`,
-  };
+  getTemplate() {
+    return `
+    <li class="trip-days__item  day">
+      <div class="day__info">
+        <span class="day__counter">${this._day}</span>
+        <time class="day__date" datetime="${this._dateTime}">${this._date}</time>
+      </div>
+      <ul class="trip-events__list">
+      </ul>
+    </li>
+    `.trim();
+  }
 
-  return `
-  <li class="trip-days__item  day">
-    <div class="day__info">
-      <span class="day__counter">${day}</span>
-      <time class="day__date" datetime="${new Date(events[0].startDate).toLocaleString()}">${new Date(events[0].startDate).toLocaleString(`ru-RU`, dateFormat)}</time>
-    </div>
+  getElement(formState) {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+      const eventsContainer = this._element.querySelector(`.trip-events__list`);
+      this._events.forEach((event) => {
+        const eventElement = new TripEvent(event).getElement();
+        const eventElementForm = new TripEventForm(event).getElement();
+        const openBtn = eventElement.querySelector(`.event__rollup-btn`);
+        const closeBtn = eventElementForm.querySelector(`.event__rollup-btn`);
 
-    <ul class="trip-events__list">
-      ${eventsMarkup.join(``)}
-    </ul>
-  </li>
-  `;
-};
+        const onBtnOpenFormClick = () => {
+          if (formState.isActive) {
+            return;
+          }
+          eventsContainer.replaceChild(eventElementForm, eventElement);
+          formState.isActive = true;
+        };
 
-export default getTripDay;
+        const onBtnCloseFormClick = () => {
+          eventsContainer.replaceChild(eventElement, eventElementForm);
+          formState.isActive = false;
+        };
+
+        const onFormSubmit = (evt) => {
+          evt.preventDefault();
+          eventsContainer.replaceChild(eventElement, eventElementForm);
+          formState.isActive = false;
+        };
+
+        openBtn.addEventListener(`click`, onBtnOpenFormClick);
+        closeBtn.addEventListener(`click`, onBtnCloseFormClick);
+        eventElementForm.addEventListener(`submit`, onFormSubmit);
+        render(eventsContainer, eventElement, Position.AFTERBEGIN);
+      });
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default TripDay;

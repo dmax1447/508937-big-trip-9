@@ -54,31 +54,23 @@ const generateRandomArr = (mokdata, maxLength) => {
   return mokArr;
 };
 
-const getTripEventData = () => ({
-  type: getRandomElement(POINT_TYPES),
-  destinationPoint: getRandomElement(MOCK_DESTINATIONS),
-  pics: [
-    `http://picsum.photos/300/150?r=${Math.random()}`,
-    `http://picsum.photos/300/150?r=${Math.random()}`,
-    `http://picsum.photos/300/150?r=${Math.random()}`,
-    `http://picsum.photos/300/150?r=${Math.random()}`,
-    `http://picsum.photos/300/150?r=${Math.random()}`,
-  ],
-  description: generateRandomArr(MOCK_DESCRIPTIONS, 4).join(``),
-  startDate: Date.now() + MILISECONDS_PER_DAY + 3 * MILISECONDS_PER_HOUR,
-  endDate: Date.now() + MILISECONDS_PER_DAY + 3 * MILISECONDS_PER_HOUR + 2 * MILISECONDS_PER_HOUR * Math.random(),
-  cost: Math.floor(Math.random() * 100),
-  offers: generateRandomArr(OFFERS, 2),
-});
-
-const getTripDayData = () => {
-  const EVENTS_IN_DAY_COUNT = 4;
-
+const getEventData = () => {
   return ({
-    events: new Array(EVENTS_IN_DAY_COUNT).fill(``).map(() => getTripEventData()),
+    type: getRandomElement(POINT_TYPES),
+    destinationPoint: getRandomElement(MOCK_DESTINATIONS),
+    pics: [
+      `http://picsum.photos/300/150?r=${Math.random()}`,
+      `http://picsum.photos/300/150?r=${Math.random()}`,
+      `http://picsum.photos/300/150?r=${Math.random()}`,
+      `http://picsum.photos/300/150?r=${Math.random()}`,
+      `http://picsum.photos/300/150?r=${Math.random()}`,
+    ],
+    description: generateRandomArr(MOCK_DESCRIPTIONS, 4).join(``),
+    startDate: Date.now() + MILISECONDS_PER_DAY + 3 * MILISECONDS_PER_HOUR,
+    endDate: Date.now() + MILISECONDS_PER_DAY + 3 * MILISECONDS_PER_HOUR + 2 * MILISECONDS_PER_HOUR * Math.random(),
+    cost: Math.floor(Math.random() * 100),
+    offers: generateRandomArr(OFFERS, 2),
   });
 };
 
-export default getTripDayData;
-
-
+export default getEventData;
