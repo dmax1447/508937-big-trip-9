@@ -1,32 +1,5 @@
 import {createElement} from './utils.js';
-import {LOCALE} from './constants.js';
-
-const eventTypeTextMap = new Map([
-  [`bus`, `bus to`],
-  [`check-in`, `check in`],
-  [`drive`, `drive to`],
-  [`flight`, `fly to`],
-  [`restaurant`, `dinner at`],
-  [`ship`, `sail to`],
-  [`sightseeing`, `take a look of`],
-  [`taxi`, `taxi to`],
-  [`train`, `train to`],
-  [`transport`, `transport to`],
-  [`trip`, `trip to`],
-]);
-
-const getEventOfferSelector = ({name, cost, isEnabled}) => {
-  return `
-  <div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}" type="checkbox" name="event-offer-luggage" ${isEnabled ? `checked` : ``}>
-    <label class="event__offer-label" for="event-offer-${name}">
-      <span class="event__offer-title">${name}</span>
-      &plus;
-      &euro;&nbsp;<span class="event__offer-price">${cost}</span>
-    </label>
-  </div>
-  `.trim();
-};
+import {LOCALE, EVENT_TO_TEXT_MAP, EVENT_FORM_DATE_FORMAT} from './constants.js';
 
 class TripEventForm {
   constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers}) {
@@ -41,8 +14,20 @@ class TripEventForm {
     this._element = null;
   }
 
+  getOfferTemplate({name, cost, isEnabled}) {
+    return `
+    <div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}" type="checkbox" name="event-offer-luggage" ${isEnabled ? `checked` : ``}>
+      <label class="event__offer-label" for="event-offer-${name}">
+        <span class="event__offer-title">${name}</span>
+        &plus;
+        &euro;&nbsp;<span class="event__offer-price">${cost}</span>
+      </label>
+    </div>
+    `.trim();
+  }
+
   getTemplate() {
-    const dateFormat = {hour12: false, hour: `2-digit`, minute: `2-digit`, year: `2-digit`, month: `2-digit`, day: `2-digit`};
     return `
     <li class="trip-events__item">
       <form class="event  event--edit" action="#" method="post">
@@ -117,7 +102,7 @@ class TripEventForm {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${eventTypeTextMap.get(this._type)}
+              ${EVENT_TO_TEXT_MAP.get(this._type)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${this._destinationPoint}" list="destination-list-1">
             <datalist id="destination-list-1">
@@ -131,12 +116,12 @@ class TripEventForm {
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${new Date(this._startDate).toLocaleString(LOCALE, dateFormat)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${new Date(this._startDate).toLocaleString(LOCALE, EVENT_FORM_DATE_FORMAT)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${new Date(this._endDate).toLocaleString(LOCALE, dateFormat)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${new Date(this._endDate).toLocaleString(LOCALE, EVENT_FORM_DATE_FORMAT)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -169,7 +154,7 @@ class TripEventForm {
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
             <div class="event__available-offers">
-              ${this._offers.map((offer) => getEventOfferSelector(offer)).join(``)}
+              ${this._offers.map((offer) => this.getOfferTemplate(offer)).join(``)}
             </div>
           </section>
 

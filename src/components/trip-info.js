@@ -1,7 +1,6 @@
 import {createElement} from './utils.js';
-import {LOCALE} from './constants.js';
+import {LOCALE, INFO_DATE_FORMAT} from './constants.js';
 
-const LOCALE_FORMAT = {month: `short`};
 const MIDDLE_POINT_EMPTY_MARK = `&mdash; ... &mdash;`;
 
 class TripInfo {
@@ -33,7 +32,7 @@ class TripInfo {
     return `
     <div class="trip-info__main">
       <h1 class="trip-info__title">${this._cities[0]} ${this._cities.length > 3 ? MIDDLE_POINT_EMPTY_MARK : this._cities[1]} ${this._cities[this._cities.length - 1]}</h1>
-      <p class="trip-info__dates">${new Date(this._startDate).toLocaleString(LOCALE, LOCALE_FORMAT)} ${new Date(this._startDate).getDate()}&nbsp;&mdash;&nbsp;${new Date(this._endDate).getDate()}</p>
+      <p class="trip-info__dates">${new Date(this._startDate).toLocaleString(LOCALE, INFO_DATE_FORMAT)} ${new Date(this._startDate).getDate()}&nbsp;&mdash;&nbsp;${new Date(this._endDate).getDate()}</p>
     </div>
     `.trim();
   }

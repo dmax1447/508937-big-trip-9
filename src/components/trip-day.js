@@ -1,11 +1,7 @@
-import {createElement, render, Position} from './utils.js';
+import {createElement, render} from './utils.js';
+import {LOCALE, DAY_DATE_FORMAT, Position} from './constants.js';
 import TripEvent from './trip-event';
 import TripEventForm from './trip-event-form.js';
-
-const dateFormatShort = {
-  month: `short`,
-  day: `2-digit`,
-};
 
 class TripDay {
   constructor(events, day) {
@@ -13,7 +9,7 @@ class TripDay {
     this._day = day;
     this._element = null;
     const dayDate = new Date(events[0].startDate);
-    this._date = dayDate.toLocaleString(`en-US`, dateFormatShort);
+    this._date = dayDate.toLocaleString(LOCALE, DAY_DATE_FORMAT);
     this._dateTime = dayDate.toISOString();
   }
 

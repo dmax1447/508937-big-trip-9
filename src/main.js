@@ -6,7 +6,8 @@ import Filter from './components/filter.js';
 import Sort from './components/sort.js';
 import TripDay from './components/trip-day.js';
 
-import {render, createElement, Position} from './components/utils.js';
+import {render, createElement} from './components/utils.js';
+import {Position} from './components/constants.js';
 
 
 const DAYS_COUNT = 3;

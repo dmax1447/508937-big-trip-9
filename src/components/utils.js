@@ -1,7 +1,4 @@
-const Position = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
-};
+import {Position} from './constants.js';
 
 const createElement = (template) => {
   const newElement = document.createElement(`div`);
@@ -27,4 +24,4 @@ const unrender = (element) => {
   }
 };
 
-export {render, unrender, createElement, Position};
+export {render, unrender, createElement};
