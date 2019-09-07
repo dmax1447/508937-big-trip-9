@@ -3,7 +3,6 @@ import getTripEventData from './components/event-data';
 import Menu from './components/menu.js';
 import TripInfo from './components/trip-info.js';
 import Filter from './components/filter.js';
-import Sort from './components/sort.js';
 import TripController from './components/trip-controller.js';
 
 import {render, createElement} from './components/utils.js';
@@ -43,15 +42,6 @@ const renderFilter = () => {
 };
 
 /**
- * рендер сортировка
- */
-const renderSort = () => {
-  const sort = new Sort();
-  const tripSortContainer = document.querySelector(`.trip-events`);
-  render(tripSortContainer, sort.getElement(), Position.BEFOREEND);
-};
-
-/**
  * рендер контейнера для дней с событиями
  * @return {node} контейнер для дней c событиями
  */
@@ -69,7 +59,6 @@ const init = () => {
   renderTripInfo(tripDays);
   renderMenu();
   renderFilter();
-  renderSort();
   const tripDaysContainer = renderTripDaysContainer();
   const tripController = new TripController(tripDaysContainer, tripDays);
   tripController.init();
