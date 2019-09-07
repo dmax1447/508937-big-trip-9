@@ -51,19 +51,28 @@ const renderSort = () => {
   render(tripSortContainer, sort.getElement(), Position.BEFOREEND);
 };
 
+/**
+ * рендер контейнера для дней с событиями
+ * @return {node} контейнер для дней c событиями
+ */
+const renderTripDaysContainer = () => {
+  const tripEventsContainer = document.querySelector(`.trip-events`);
+  const tripDaysContainer = createElement(`<ul class="trip-days"></ul>`);
+  render(tripEventsContainer, tripDaysContainer, Position.BEFOREEND);
+  return tripDaysContainer;
+};
+
 const init = () => {
   // готовим исходные данные, массив дней, в каждом дне массив событий
   const tripDays = new Array(DAYS_COUNT).fill(``).map(() => new Array(EVENTS_IN_DAY_COUNT).fill(``).map(() => getTripEventData()));
+  // рендерим инфу о поездке, меню, фильтр, сортировку, и контейнер для дней путешествия
   renderTripInfo(tripDays);
   renderMenu();
   renderFilter();
   renderSort();
-  const tripEventsContainer = document.querySelector(`.trip-events`);
-  const tripDaysContainer = createElement(`<ul class="trip-days"></ul>`);
-  render(tripEventsContainer, tripDaysContainer, Position.BEFOREEND);
+  const tripDaysContainer = renderTripDaysContainer();
   const tripController = new TripController(tripDaysContainer, tripDays);
   tripController.init();
-
 };
 
 init();
