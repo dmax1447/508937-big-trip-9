@@ -1,9 +1,9 @@
-import {createElement} from './utils.js';
+import AbstractComponent from './abstract.js';
 
-class Menu {
+class Menu extends AbstractComponent {
   constructor() {
+    super();
     this._items = [{name: `Table`, isActive: true}, {name: `Stats`, isActive: false}];
-    this._element = null;
   }
 
   getTabTemplate(tab) {
@@ -18,17 +18,6 @@ class Menu {
       ${this._items.map((item) => this.getTabTemplate(item)).join(``)}
     </nav>
     `.trim();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

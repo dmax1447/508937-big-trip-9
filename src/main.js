@@ -4,7 +4,7 @@ import Menu from './components/menu.js';
 import TripInfo from './components/trip-info.js';
 import Filter from './components/filter.js';
 import Sort from './components/sort.js';
-import TripDay from './components/trip-day.js';
+import TripController from './components/trip-controller.js';
 
 import {render, createElement} from './components/utils.js';
 import {Position} from './components/constants.js';
@@ -52,32 +52,27 @@ const renderSort = () => {
 };
 
 /**
- * рендер событий поездки
- * @param {Array} tripDays массив дней с событиями
+ * рендер контейнера для дней с событиями
+ * @return {node} контейнер для дней c событиями
  */
-const renderTripDays = (tripDays) => {
-  const formState = {
-    isActive: false,
-  };
-  const tripDaysContainer = createElement(`<ul class="trip-days"></ul>`);
+const renderTripDaysContainer = () => {
   const tripEventsContainer = document.querySelector(`.trip-events`);
+  const tripDaysContainer = createElement(`<ul class="trip-days"></ul>`);
   render(tripEventsContainer, tripDaysContainer, Position.BEFOREEND);
-  // рендерим дни с событиями в контейнер
-  for (let i = 0; i < tripDays.length; i++) {
-    const tripDay = new TripDay(tripDays[i], i + 1);
-    render(tripDaysContainer, tripDay.getElement(formState), Position.BEFOREEND);
-  }
+  return tripDaysContainer;
 };
-
 
 const init = () => {
   // готовим исходные данные, массив дней, в каждом дне массив событий
   const tripDays = new Array(DAYS_COUNT).fill(``).map(() => new Array(EVENTS_IN_DAY_COUNT).fill(``).map(() => getTripEventData()));
+  // рендерим инфу о поездке, меню, фильтр, сортировку, и контейнер для дней путешествия
   renderTripInfo(tripDays);
   renderMenu();
   renderFilter();
   renderSort();
-  renderTripDays(tripDays);
+  const tripDaysContainer = renderTripDaysContainer();
+  const tripController = new TripController(tripDaysContainer, tripDays);
+  tripController.init();
 };
 
 init();
