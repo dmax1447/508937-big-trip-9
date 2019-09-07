@@ -1,8 +1,8 @@
-import {createElement} from './utils.js';
+import AbstractComponent from './abstract.js';
 
-
-class Sort {
+class Sort extends AbstractComponent {
   constructor() {
+    super();
     this._items = [
       {
         name: `event`,
@@ -17,7 +17,6 @@ class Sort {
         isEnabled: false,
       },
     ];
-    this._element = null;
   }
 
   getTemplate() {
@@ -55,17 +54,6 @@ class Sort {
     `.trim();
   }
 
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }
 
 export default Sort;

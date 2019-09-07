@@ -1,10 +1,11 @@
-import {createElement} from './utils.js';
+import AbstractComponent from './abstract.js';
 import {LOCALE, INFO_DATE_FORMAT} from './constants.js';
 
 const MIDDLE_POINT_EMPTY_MARK = `&mdash; ... &mdash;`;
 
-class TripInfo {
+class TripInfo extends AbstractComponent {
   constructor(tripData) {
+    super();
     this._cities = tripData.reduce((acc, day) => {
       const dayCities = day.reduce((acc2, event) => [event.destinationPoint, ...acc2], []);
       return [...acc, ...dayCities];
@@ -18,14 +19,6 @@ class TripInfo {
     this._startDate = tripData[0][0].startDate;
     const lastEventIndex = tripData[tripData.length - 1].length - 1;
     this._endDate = tripData[tripData.length - 1][lastEventIndex].endDate;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
   }
 
   getTemplate() {
@@ -35,10 +28,6 @@ class TripInfo {
       <p class="trip-info__dates">${new Date(this._startDate).toLocaleString(LOCALE, INFO_DATE_FORMAT)} ${new Date(this._startDate).getDate()}&nbsp;&mdash;&nbsp;${new Date(this._endDate).getDate()}</p>
     </div>
     `.trim();
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

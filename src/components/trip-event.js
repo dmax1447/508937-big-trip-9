@@ -1,8 +1,9 @@
-import {createElement} from './utils.js';
+import AbstractComponent from './abstract.js';
 import {MILISECONDS_PER_HOUR, MILISECONDS_PER_MINUTE, LOCALE, EVENT_TO_TEXT_MAP, EVENT_TIME_FORMAT} from './constants.js';
 
-class TripEvent {
+class TripEvent extends AbstractComponent {
   constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers}) {
+    super();
     this._type = type;
     this._destinationPoint = destinationPoint;
     this._pics = pics;
@@ -11,7 +12,6 @@ class TripEvent {
     this._endDate = endDate;
     this._cost = cost;
     this._offers = offers;
-    this._element = null;
   }
 
   getOfferTemplate(offer) {
@@ -62,18 +62,6 @@ class TripEvent {
       </div>
     </li>
     `.trim();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

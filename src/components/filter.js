@@ -1,7 +1,8 @@
-import {createElement} from './utils.js';
+import AbstractComponent from './abstract.js';
 
-class Filter {
+class Filter extends AbstractComponent {
   constructor() {
+    super();
     this._items = [
       {
         name: `everything`,
@@ -16,7 +17,6 @@ class Filter {
         isEnabled: false,
       },
     ];
-    this._element = null;
   }
 
   getFilterItemTemplate(filter) {
@@ -35,17 +35,6 @@ class Filter {
       <button class="visually-hidden" type="submit">Accept filter</button>
     </form>
     `.trim();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

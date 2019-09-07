@@ -1,8 +1,9 @@
-import {createElement} from './utils.js';
+import AbstractComponent from './abstract.js';
 import {LOCALE, EVENT_TO_TEXT_MAP, EVENT_FORM_DATE_FORMAT} from './constants.js';
 
-class TripEventForm {
+class TripEventForm extends AbstractComponent {
   constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers}) {
+    super();
     this._type = type;
     this._destinationPoint = destinationPoint;
     this._pics = pics;
@@ -11,7 +12,6 @@ class TripEventForm {
     this._endDate = endDate;
     this._cost = cost;
     this._offers = offers;
-    this._element = null;
   }
 
   getOfferTemplate({name, cost, isEnabled}) {
@@ -176,18 +176,6 @@ class TripEventForm {
       </form>
     </li>
     `.trim();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
