@@ -59,7 +59,7 @@ class TripDay extends AbstractComponent {
         openBtn.addEventListener(`click`, onBtnOpenFormClick);
         closeBtn.addEventListener(`click`, onBtnCloseFormClick);
         eventElementForm.addEventListener(`submit`, onFormSubmit);
-        render(eventsContainer, eventElement, Position.AFTERBEGIN);
+        render(eventsContainer, eventElement, Position.BEFOREEND);
       });
     }
     return this._element;

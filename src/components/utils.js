@@ -20,7 +20,8 @@ const render = (container, element, place) => {
 
 const unrender = (element) => {
   if (element) {
-    element.remove();
+    element._element.remove();
+    element.removeElement();
   }
 };
 
