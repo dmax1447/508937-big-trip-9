@@ -7,7 +7,7 @@ class TripInfo extends AbstractComponent {
   constructor(tripData) {
     super();
     this._cities = tripData.reduce((acc, day) => {
-      const dayCities = day.reduce((acc2, event) => [event.destinationPoint, ...acc2], []);
+      const dayCities = day.reduce((acc2, event) => [...acc2, event.destinationPoint], []);
       return [...acc, ...dayCities];
     }, []);
 

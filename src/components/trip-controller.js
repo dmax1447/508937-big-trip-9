@@ -9,7 +9,6 @@ class TripController {
     this._tripDays = tripDays;
     this._formState = {isActive: false};
     this._sort = new Sort();
-    this._activeSort = null;
   }
 
   init() {
@@ -17,17 +16,16 @@ class TripController {
     render(tripSortContainer, this._sort.getElement(), Position.AFTERBEGIN);
     const sortInputs = [...document.querySelectorAll(`.trip-sort__input`)];
 
-    const changeActiveSort = (evt) => {
-      this._activeSort = evt.target.dataset.sortId;
+    const onSortFieldClick = (evt) => {
+      const sortBy = evt.target.dataset.sortId;
       this._sort._items.forEach((item) => {
-        item.isEnabled = (item.name === this._activeSort);
+        item.isEnabled = (item.name === sortBy);
       });
-      console.log(this._sort);
-      console.log(this._activeSort);
+      this.sort(sortBy);
     };
 
     sortInputs.forEach((input) => {
-      input.addEventListener(`click`, changeActiveSort);
+      input.addEventListener(`click`, onSortFieldClick);
     });
 
     for (let i = 0; i < this._tripDays.length; i++) {
@@ -36,8 +34,15 @@ class TripController {
     }
   }
 
-  sort() {
-    console.log(`sort`);
+  sort(sortBy) {
+    console.log(sortBy);
+    console.log(this._tripDays);
+    // this._tripDays.forEach((dayEvents) => {
+    //   dayEvents.sort((a, b) => {
+    //     return 1;
+    //   });
+    // });
+
   }
 
 }
