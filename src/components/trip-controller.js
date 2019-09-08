@@ -1,7 +1,7 @@
 import TripDay from './trip-day.js';
 import Sort from './sort.js';
 import {Position} from './constants.js';
-import {render} from './utils.js';
+import {render, unrender} from './utils.js';
 
 class TripController {
   constructor(container, tripDays) {
@@ -9,6 +9,7 @@ class TripController {
     this._tripDays = tripDays;
     this._formState = {isActive: false};
     this._sort = new Sort();
+    this._tripDayElements = [];
   }
 
   init() {
@@ -30,19 +31,16 @@ class TripController {
 
     for (let i = 0; i < this._tripDays.length; i++) {
       const tripDay = new TripDay(this._tripDays[i], i + 1);
+      this._tripDayElements.push(tripDay);
       render(this._container, tripDay.getElement(this._formState), Position.BEFOREEND);
     }
   }
 
   sort(sortBy) {
-    console.log(sortBy);
-    console.log(`before`);
-    console.log(this._tripDays);
-
     const compare = (a, b, field) => {
       switch (field) {
         case `event`:
-          return a.name > b.name ? 1 : -1;
+          return a.destinationPoint > b.destinationPoint ? 1 : -1;
         case `time`:
           return a.time > b.time ? 1 : -1;
         case `price`:
@@ -53,18 +51,23 @@ class TripController {
       return 0;
     };
 
-
     this._tripDays.forEach((dayEvents) => {
       dayEvents.sort((a, b) => {
         return compare(a, b, sortBy);
       });
     });
 
-    console.log(`after:`);
-    console.log(this._tripDays);
+    this._tripDayElements.forEach((item) => {
+      unrender(item);
+    });
+    this._tripDayElements = [];
 
+    for (let i = 0; i < this._tripDays.length; i++) {
+      const tripDay = new TripDay(this._tripDays[i], i + 1);
+      this._tripDayElements.push(tripDay);
+      render(this._container, tripDay.getElement(this._formState), Position.BEFOREEND);
+    }
   }
-
 }
 
 export default TripController;
