@@ -36,12 +36,32 @@ class TripController {
 
   sort(sortBy) {
     console.log(sortBy);
+    console.log(`before`);
     console.log(this._tripDays);
-    // this._tripDays.forEach((dayEvents) => {
-    //   dayEvents.sort((a, b) => {
-    //     return 1;
-    //   });
-    // });
+
+    const compare = (a, b, field) => {
+      switch (field) {
+        case `event`:
+          return a.name > b.name ? 1 : -1;
+        case `time`:
+          return a.time > b.time ? 1 : -1;
+        case `price`:
+          return a.cost > b.cost ? 1 : -1;
+        default:
+          break;
+      }
+      return 0;
+    };
+
+
+    this._tripDays.forEach((dayEvents) => {
+      dayEvents.sort((a, b) => {
+        return compare(a, b, sortBy);
+      });
+    });
+
+    console.log(`after:`);
+    console.log(this._tripDays);
 
   }
 
