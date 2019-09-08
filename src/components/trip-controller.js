@@ -73,10 +73,6 @@ class TripController {
       });
     });
     this.unrenderDays();
-    console.log(`unsorted:`);
-    console.log(this._tripDays);
-    console.log(`sorted by ${sortBy}:`);
-    console.log(this._tripDaysSorted);
     this.renderDays(sortBy === `event` ? this._tripDays : this._tripDaysSorted);
   }
 }
