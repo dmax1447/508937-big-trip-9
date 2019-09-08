@@ -66,8 +66,8 @@ const getEventData = () => {
       `http://picsum.photos/300/150?r=${Math.random()}`,
     ],
     description: generateRandomArr(MOCK_DESCRIPTIONS, 4).join(``),
-    startDate: Date.now() + MILISECONDS_PER_DAY + 3 * MILISECONDS_PER_HOUR + (Math.random() * MILISECONDS_PER_HOUR),
-    endDate: Date.now() + MILISECONDS_PER_DAY + 6 * MILISECONDS_PER_HOUR + MILISECONDS_PER_HOUR * Math.random(),
+    startDate: Math.round(Date.now() + MILISECONDS_PER_DAY + 3 * MILISECONDS_PER_HOUR + (Math.random() * MILISECONDS_PER_HOUR)),
+    endDate: Math.round(Date.now() + MILISECONDS_PER_DAY + 6 * MILISECONDS_PER_HOUR + MILISECONDS_PER_HOUR * Math.random()),
     cost: Math.floor(Math.random() * 100),
     offers: generateRandomArr(OFFERS, 2),
   });

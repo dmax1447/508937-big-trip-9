@@ -168,7 +168,7 @@ class TripEventForm extends AbstractComponent {
                 <img class="event__photo" src="${this._pics[1]}" alt="Event photo">
                 <img class="event__photo" src="${this._pics[2]}" alt="Event photo">
                 <img class="event__photo" src="${this._pics[3]}" alt="Event photo">
-                <img class="event__photo" src="${this._pics[4]}.jpg" alt="Event photo">
+                <img class="event__photo" src="${this._pics[4]}" alt="Event photo">
               </div>
             </div>
           </section>
