@@ -60,7 +60,7 @@ class TripController {
         case `event`:
           return a.destinationPoint > b.destinationPoint ? 1 : -1;
         case `time`:
-          return a.time > b.time ? 1 : -1;
+          return a.startDate > b.startDate ? 1 : -1;
         case `price`:
           return a.cost > b.cost ? 1 : -1;
         default:
