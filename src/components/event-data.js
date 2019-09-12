@@ -54,7 +54,10 @@ const generateRandomArr = (mokdata, maxLength) => {
   return mokArr;
 };
 
-const getEventData = () => {
+const getEventData = (id) => {
+  const startDate = Math.round(Date.now() + 2 * MILISECONDS_PER_DAY + 3 * MILISECONDS_PER_HOUR + (Math.random() * MILISECONDS_PER_HOUR));
+  const endDate = startDate + MILISECONDS_PER_DAY * 2 * Math.random();
+
   return ({
     type: getRandomElement(POINT_TYPES),
     destinationPoint: getRandomElement(MOCK_DESTINATIONS),
@@ -66,10 +69,11 @@ const getEventData = () => {
       `http://picsum.photos/300/150?r=${Math.random()}`,
     ],
     description: generateRandomArr(MOCK_DESCRIPTIONS, 4).join(``),
-    startDate: Math.round(Date.now() + MILISECONDS_PER_DAY + 3 * MILISECONDS_PER_HOUR + (Math.random() * MILISECONDS_PER_HOUR)),
-    endDate: Math.round(Date.now() + MILISECONDS_PER_DAY + 6 * MILISECONDS_PER_HOUR + MILISECONDS_PER_HOUR * Math.random()),
+    startDate,
+    endDate,
     cost: Math.floor(Math.random() * 100),
     offers: generateRandomArr(OFFERS, 2),
+    id,
   });
 };
 

@@ -54,7 +54,9 @@ const renderTripDaysContainer = () => {
 
 const init = () => {
   // готовим исходные данные, массив дней, в каждом дне массив событий
-  const tripDays = new Array(DAYS_COUNT).fill(``).map(() => new Array(EVENTS_IN_DAY_COUNT).fill(``).map(() => getTripEventData()));
+  let idCount = 0;
+  const tripDays = new Array(DAYS_COUNT).fill(``).map(() => new Array(EVENTS_IN_DAY_COUNT).fill(``).map(() => getTripEventData(idCount += 1)));
+  const tripDays2 = new Array(DAYS_COUNT * EVENTS_IN_DAY_COUNT).fill(``).map(() => getTripEventData(idCount += 1));
   // рендерим инфу о поездке, меню, фильтр, сортировку, и контейнер для дней путешествия
   renderTripInfo(tripDays);
   renderMenu();

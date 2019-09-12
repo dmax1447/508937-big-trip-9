@@ -29,7 +29,6 @@ class TripEventForm extends AbstractComponent {
 
   getTemplate() {
     return `
-    <li class="trip-events__item">
       <form class="event  event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
@@ -174,7 +173,6 @@ class TripEventForm extends AbstractComponent {
           </section>
         </section>
       </form>
-    </li>
     `.trim();
   }
 }

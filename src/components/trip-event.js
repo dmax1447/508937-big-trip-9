@@ -31,7 +31,6 @@ class TripEvent extends AbstractComponent {
     const durationMinutes = Math.round((duration - MILISECONDS_PER_HOUR * duraionHours) / MILISECONDS_PER_MINUTE);
 
     return `
-    <li class="trip-events__item">
       <div class="event">
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${this._type}.png" alt="Event type icon">
@@ -60,7 +59,6 @@ class TripEvent extends AbstractComponent {
           <span class="visually-hidden">Open event</span>
         </button>
       </div>
-    </li>
     `.trim();
   }
 }

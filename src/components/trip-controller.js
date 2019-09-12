@@ -1,5 +1,16 @@
+/**
+   * 1. правильно ли генерировать данные в виде массив дней - в дне массив значений?
+   *  - это упростит поиск и обработку данных по событиям
+   *  - так же скорее всего с сервера данные будут приходить в виде массива событий
+   *  - если пользователь изменит дату события, то событие окажется не в том дне. следовательно дни зависят от событий а не наооброт
+   *  - для генерации дат дней можно пройти по массиву событий собрав даты и сделать из них Set
+   *  - в дальнейшем в разметку дня просто передавать отфильтрованные по дню события
+   * 2. правильный ли метод привязки this для вызова в pointController коллбека onDataChange?
+   */
+
 import TripDay from './trip-day.js';
 import Sort from './sort.js';
+import PointController from './point-controller';
 import {Position} from './constants.js';
 import {render, unrender} from './utils.js';
 
@@ -11,6 +22,7 @@ class TripController {
     this._formState = {isActive: false};
     this._sort = new Sort();
     this._tripDayElements = [];
+    this._isFormActive = false;
   }
 
   // начальная инициализация
@@ -39,10 +51,19 @@ class TripController {
   // рендерит в DOM элементы "День" и сохраняет ссылки на них
   renderDays(tripDays) {
     for (let i = 0; i < tripDays.length; i++) {
-      const tripDay = new TripDay(tripDays[i], i + 1);
+      const tripDay = new TripDay(tripDays[i].length, i + 1, tripDays[i][0].startDate);
       this._tripDayElements.push(tripDay);
       render(this._container, tripDay.getElement(this._formState), Position.BEFOREEND);
+      this.renderDayEvents(tripDay._element, tripDays[i]);
     }
+  }
+
+  renderDayEvents(container, events) {
+    const eventSlots = [...container.querySelectorAll(`.trip-events__item`)];
+    eventSlots.forEach((slot, i) => {
+      const pointController = new PointController(slot, events[i], this.onDataChange, this.onChangeView, this._isFormActive, this);
+      pointController.render();
+    });
   }
 
   // удаляет из DOM элементы "День путешествия" и ссылки на них
@@ -74,6 +95,23 @@ class TripController {
     });
     this.unrenderDays();
     this.renderDays(sortBy === `event` ? this._tripDays : this._tripDaysSorted);
+  }
+
+  // коллбек на изменение данных, вызывается в pointController в контексте tripController
+  onDataChange(data) {
+    let event = null;
+    this._tripDays.forEach((day) => {  
+      const index = day.findIndex((item) => item.id === data.id);
+      if (index !== -1) {
+        event = day[index];
+      }
+    });
+    event.cost = data.cost;
+    console.log(event);
+  }
+
+  onChangeView(state) {
+    this._isFormActive = state.isFormActive;
   }
 }
 
