@@ -3,6 +3,7 @@ import {createElement, render} from './utils.js';
 import {LOCALE, DAY_DATE_FORMAT, Position} from './constants.js';
 import TripEvent from './trip-event';
 import TripEventForm from './trip-event-form.js';
+import TripEventFormFirst from './trip-event-form-first.js';
 
 class TripDay extends AbstractComponent {
   constructor(events, day) {
@@ -31,6 +32,10 @@ class TripDay extends AbstractComponent {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
       const eventsContainer = this._element.querySelector(`.trip-events__list`);
+      if (this._events.length === 0 && this._day === 1) {
+        const eventElementFormFirst = new TripEventFormFirst().getElement();
+        render(eventsContainer, eventElementFormFirst, Position.BEFOREEND);
+      }
       this._events.forEach((event) => {
         const eventElement = new TripEvent(event).getElement();
         const eventElementForm = new TripEventForm(event).getElement();
@@ -42,18 +47,29 @@ class TripDay extends AbstractComponent {
             return;
           }
           eventsContainer.replaceChild(eventElementForm, eventElement);
+          document.addEventListener(`keydown`, onEscKeyDown);
           formState.isActive = true;
         };
 
         const onBtnCloseFormClick = () => {
           eventsContainer.replaceChild(eventElement, eventElementForm);
+          document.removeEventListener(`keydown`, onEscKeyDown);
           formState.isActive = false;
         };
 
         const onFormSubmit = (evt) => {
           evt.preventDefault();
           eventsContainer.replaceChild(eventElement, eventElementForm);
+          document.removeEventListener(`keydown`, onEscKeyDown);
           formState.isActive = false;
+        };
+
+        const onEscKeyDown = (evt) => {
+          if (evt.key === `Escape` || evt.key === `Esc`) {
+            eventsContainer.replaceChild(eventElement, eventElementForm);
+            formState.isActive = false;
+          }
+          document.removeEventListener(`keydown`, onEscKeyDown);
         };
 
         openBtn.addEventListener(`click`, onBtnOpenFormClick);
