@@ -4,15 +4,14 @@ import TripEvent from './trip-event';
 import TripEventForm from './trip-event-form.js';
 
 class PointController {
-  constructor(container, event, onDataChange, onChangeView, isFormActive, context) {
+  constructor(container, event, onDataChange, onChangeView) {
     this._container = container;
     this._event = event;
+
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
     this._eventElement = new TripEvent(event).getElement();
     this._eventFormElement = new TripEventForm(event).getElement();
-    this._isFormActive = isFormActive;
-    this._context = context;
   }
 
   render() {
@@ -46,7 +45,7 @@ class PointController {
         offers: data.get(``),
         id: this._event.id,
       };
-      this._onDataChange.call(this._context, entry);
+      this._onDataChange(entry);
       this._onChangeView({isFormActive: false});
     };
 
