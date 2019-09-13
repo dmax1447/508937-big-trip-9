@@ -17,29 +17,6 @@ const POINT_TYPES = [
   `ship`,
   `sightseeing`, `taxi`, `train`, `transport`, `trip`];
 
-const OFFERS = [
-  {
-    name: `Add luggage`,
-    cost: 10,
-    isEnabled: Math.random() >= 0.5,
-  },
-  {
-    name: `Switch to comfort`,
-    cost: 150,
-    isEnabled: Math.random() >= 0.5,
-  },
-  {
-    name: `Add meal`,
-    cost: 2,
-    isEnabled: Math.random() >= 0.5,
-  },
-  {
-    name: `Choose seats`,
-    cost: 9,
-    isEnabled: Math.random() >= 0.5,
-  },
-];
-
 const getRandomElement = (arr) => {
   const randomIndex = Math.round((arr.length - 1) * Math.random());
   return arr[randomIndex];
@@ -72,8 +49,30 @@ const getEventData = (id) => {
     startDate,
     endDate,
     cost: Math.floor(Math.random() * 100),
-    offers: generateRandomArr(OFFERS, 2),
+    offers: [
+      {
+        name: `Add luggage`,
+        cost: 10,
+        isEnabled: Math.random() >= 0.5,
+      },
+      {
+        name: `Switch to comfort`,
+        cost: 150,
+        isEnabled: Math.random() >= 0.5,
+      },
+      {
+        name: `Add meal`,
+        cost: 2,
+        isEnabled: Math.random() >= 0.5,
+      },
+      {
+        name: `Choose seats`,
+        cost: 9,
+        isEnabled: false,
+      },
+    ],
     id,
+    isFavorite: Math.random() >= 0.5,
   });
 };
 

@@ -2,7 +2,7 @@ import AbstractComponent from './abstract.js';
 import {LOCALE, EVENT_TO_TEXT_MAP, EVENT_FORM_DATE_FORMAT} from './constants.js';
 
 class TripEventForm extends AbstractComponent {
-  constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers}) {
+  constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers, isFavorite}) {
     super();
     this._type = type;
     this._destinationPoint = destinationPoint;
@@ -12,12 +12,13 @@ class TripEventForm extends AbstractComponent {
     this._endDate = endDate;
     this._cost = cost;
     this._offers = offers;
+    this._isFavorite = isFavorite;
   }
 
   getOfferTemplate({name, cost, isEnabled}) {
     return `
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}" type="checkbox" name="event-offer-luggage" ${isEnabled ? `checked` : ``}>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}" type="checkbox" name="event-offer" value="${name}" ${isEnabled ? `checked` : ``}>
       <label class="event__offer-label" for="event-offer-${name}">
         <span class="event__offer-title">${name}</span>
         &plus;
@@ -134,7 +135,7 @@ class TripEventForm extends AbstractComponent {
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
 
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked>
+          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">

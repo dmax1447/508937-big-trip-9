@@ -39,10 +39,36 @@ class PointController {
         type: data.get(`event-type`),
         destinationPoint: data.get(`event-destination`),
         description: data.get(``),
-        startDate: data.get(`event-start-time`),
-        endDate: data.get(`event-end-time`),
-        cost: data.get(`event-price`),
-        offers: data.get(``),
+        startDate: new Date(data.get(`event-start-time`)),
+        endDate: new Date(data.get(`event-end-time`)),
+        cost: parseInt(data.get(`event-price`), 10),
+        offers: data.getAll(`event-offer`).reduce((acc, offerName) => {
+          const offer = acc.find((item) => item.name === offerName);
+          offer.isEnabled = true;
+          return acc;
+        }, [
+          {
+            name: `Add luggage`,
+            cost: 10,
+            isEnabled: false,
+          },
+          {
+            name: `Switch to comfort`,
+            cost: 150,
+            isEnabled: false,
+          },
+          {
+            name: `Add meal`,
+            cost: 2,
+            isEnabled: false,
+          },
+          {
+            name: `Choose seats`,
+            cost: 9,
+            isEnabled: false,
+          },
+        ]),
+        isFavorite: data.get(`event-favorite`),
         id: this._event.id,
       };
       this._onDataChange(entry);
