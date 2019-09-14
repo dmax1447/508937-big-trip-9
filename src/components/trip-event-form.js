@@ -1,5 +1,6 @@
 import AbstractComponent from './abstract.js';
-import {LOCALE, EVENT_TO_TEXT_MAP, EVENT_FORM_DATE_FORMAT} from './constants.js';
+import {EVENT_TO_TEXT_MAP} from './constants.js';
+import moment from 'moment';
 
 class TripEventForm extends AbstractComponent {
   constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers, isFavorite}) {
@@ -116,12 +117,12 @@ class TripEventForm extends AbstractComponent {
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${new Date(this._startDate).toLocaleString(LOCALE, EVENT_FORM_DATE_FORMAT)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${moment(this._startDate).format(`DD/MM/YY HH:MM`)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${new Date(this._endDate).toLocaleString(LOCALE, EVENT_FORM_DATE_FORMAT)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${moment(this._endDate).format(`DD/MM/YY HH:MM`)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">

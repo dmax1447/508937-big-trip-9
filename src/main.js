@@ -4,13 +4,12 @@ import Menu from './components/menu.js';
 import TripInfo from './components/trip-info.js';
 import Filter from './components/filter.js';
 import TripController from './components/trip-controller.js';
-
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/light.css';
 import {render, createElement} from './components/utils.js';
 import {Position} from './components/constants.js';
 
-
-const DAYS_COUNT = 0;
-const EVENTS_IN_DAY_COUNT = 4;
+const EVENTS_COUNT = 15;
 
 /**
  * подготовка и рендер информации о поездке
@@ -55,10 +54,8 @@ const renderTripDaysContainer = () => {
 const init = () => {
   // готовим исходные данные, массив дней, в каждом дне массив событий
   let idCount = 0;
+  const tripEvents = new Array(EVENTS_COUNT).fill(``).map(() => getTripEventData(idCount += 1));
 
-  const tripEvents = new Array(DAYS_COUNT * EVENTS_IN_DAY_COUNT).fill(``).map(() => getTripEventData(idCount += 1));
-
-  // ----
   // рендерим инфу о поездке, меню, фильтр, сортировку, и контейнер для дней путешествия
   if (tripEvents.length > 0) {
     renderTripInfo(tripEvents);

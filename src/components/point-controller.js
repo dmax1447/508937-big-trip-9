@@ -1,7 +1,9 @@
-import {Position} from './constants.js';
+import {Position, EVENT_FORM_DATE_FORMAT} from './constants.js';
 import {render} from './utils.js';
 import TripEvent from './trip-event';
 import TripEventForm from './trip-event-form.js';
+import flatpickr from 'flatpickr';
+import moment from 'moment';
 
 class PointController {
   constructor(container, event, onDataChange, onChangeView) {
@@ -39,8 +41,8 @@ class PointController {
         type: data.get(`event-type`),
         destinationPoint: data.get(`event-destination`),
         description: data.get(``),
-        startDate: new Date(data.get(`event-start-time`)),
-        endDate: new Date(data.get(`event-end-time`)),
+        startDate: moment(data.get(`event-start-time`), `DD-MM-YY HH-MM`),
+        endDate: moment(data.get(`event-end-time`), `DD-MM-YY HH-MM`),
         cost: parseInt(data.get(`event-price`), 10),
         offers: data.getAll(`event-offer`).reduce((acc, offerName) => {
           const offer = acc.find((item) => item.name === offerName);
@@ -85,6 +87,7 @@ class PointController {
     closeBtn.addEventListener(`click`, onBtnCloseFormClick);
     this._eventFormElement.addEventListener(`submit`, onFormSubmit);
     render(this._container, this._eventElement, Position.BEFOREEND);
+    flatpickr(this._eventFormElement.querySelectorAll(`.event__input--time`), EVENT_FORM_DATE_FORMAT);
   }
 
   setDefaultView() {

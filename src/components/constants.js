@@ -20,12 +20,10 @@ const EVENT_TO_TEXT_MAP = new Map(
 
 const EVENT_FORM_DATE_FORMAT =
   {
-    hour12: false,
-    hour: `2-digit`,
-    minute: `2-digit`,
-    year: `2-digit`,
-    month: `2-digit`,
-    day: `2-digit`
+    enableTime: true,
+    // eslint-disable-next-line camelcase
+    time_24hr: true,
+    dateFormat: `d/m/y H:i`,
   };
 
 const EVENT_TIME_FORMAT = {

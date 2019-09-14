@@ -20,4 +20,12 @@ module.exports = {
       localesToKeep: [`en-gb`],
     }),
   ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [`style-loader`, `css-loader`],
+      }
+    ]
+  },
 };
