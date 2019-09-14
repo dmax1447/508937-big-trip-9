@@ -12,6 +12,7 @@ class PointController {
     this._onChangeView = onChangeView;
     this._eventElement = new TripEvent(event).getElement();
     this._eventFormElement = new TripEventForm(event).getElement();
+    this.setDefaultView = this.setDefaultView.bind(this);
   }
 
   render() {
@@ -19,15 +20,14 @@ class PointController {
     const closeBtn = this._eventFormElement.querySelector(`.event__rollup-btn`);
 
     const onBtnOpenFormClick = () => {
+      this._onChangeView();
       this._container.replaceChild(this._eventFormElement, this._eventElement);
       document.addEventListener(`keydown`, onEscKeyDown);
-      this._onChangeView({isFormActive: true});
     };
 
     const onBtnCloseFormClick = () => {
       this._container.replaceChild(this._eventElement, this._eventFormElement);
       document.removeEventListener(`keydown`, onEscKeyDown);
-      this._onChangeView({isFormActive: false});
     };
 
     const onFormSubmit = (evt) => {
@@ -72,7 +72,6 @@ class PointController {
         id: this._event.id,
       };
       this._onDataChange(entry);
-      this._onChangeView({isFormActive: false});
     };
 
     const onEscKeyDown = (evt) => {
@@ -80,13 +79,18 @@ class PointController {
         this._container.replaceChild(this._eventElement, this._eventFormElement);
       }
       document.removeEventListener(`keydown`, onEscKeyDown);
-      this._onChangeView({isFormActive: false});
     };
 
     openBtn.addEventListener(`click`, onBtnOpenFormClick);
     closeBtn.addEventListener(`click`, onBtnCloseFormClick);
     this._eventFormElement.addEventListener(`submit`, onFormSubmit);
     render(this._container, this._eventElement, Position.BEFOREEND);
+  }
+
+  setDefaultView() {
+    if (this._container.contains(this._eventFormElement)) {
+      this._container.replaceChild(this._eventElement, this._eventFormElement);
+    }
   }
 
 }

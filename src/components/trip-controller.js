@@ -1,42 +1,42 @@
-/**
-   * 1. правильно ли генерировать данные в виде массив дней - в дне массив значений?
-   *  - это упростит поиск и обработку данных по событиям
-   *  - так же скорее всего с сервера данные будут приходить в виде массива событий
-   *  - если пользователь изменит дату события, то событие окажется не в том дне. следовательно дни зависят от событий а не наооброт
-   *  - для генерации дат дней можно пройти по массиву событий собрав даты и сделать из них Set
-   *  - в дальнейшем в разметку дня просто передавать отфильтрованные по дню события
-   * 2. правильный ли метод привязки this для вызова в pointController коллбеков onDataChange, onChangeViev
-   * 3. деструктурирующее присваивание объектов, можно ли использовать? event = { ...event, ...data}
-   * 4. как должна работать логика onChangeView? (закрытие старой карточки при открытии новой)
-   */
 
 import TripDay from './trip-day.js';
 import Sort from './sort.js';
 import PointController from './point-controller';
+import TripEventFormFirst from './trip-event-form-first';
 import {Position} from './constants.js';
 import {render, unrender} from './utils.js';
+import moment from 'moment';
+
 
 class TripController {
-  constructor(container, tripDays) {
+  constructor(container, events) {
     this._container = container;
-    this._tripDays = tripDays;
-    this._tripDaysSorted = [];
+    this._events = events;
+    this._eventsSorted = [];
     this._formState = {isActive: false};
     this._sort = new Sort();
     this._tripDayElements = [];
     this._isFormActive = false;
     this._onDataChange = this._onDataChange.bind(this);
     this._onChangeView = this._onChangeView.bind(this);
+    this._subscriptions = [];
   }
 
   // начальная инициализация
   init() {
-    this.initSort();
-    this.renderDays(this._tripDays);
+    this.renderSort();
+    this.renderDays(this._events, true);
+    if (this._events.length === 0) {
+      const tripEventFormFirst = new TripEventFormFirst();
+      render(this._container, tripEventFormFirst.getElement(), Position.BEFOREEND);
+    }
   }
 
-  // инициализация сортировки: подвешивание обработчиков
-  initSort() {
+  // рендер сортировки: подвешивание обработчиков
+  renderSort() {
+    if (this._sort._element) {
+      unrender(this._sort);
+    }
     render(this._container, this._sort.getElement(), Position.AFTERBEGIN);
     const sortInputs = [...this._sort._element.querySelectorAll(`.trip-sort__input`)];
     const onSortFieldClick = (evt) => {
@@ -44,6 +44,7 @@ class TripController {
       this._sort._items.forEach((item) => {
         item.isEnabled = (item.name === sortBy);
       });
+      this.renderSort();
       this.sortEvents(sortBy);
     };
 
@@ -52,21 +53,34 @@ class TripController {
     });
   }
 
+  getEventDays(events) {
+    const eventsDays = [];
+    events.forEach((event) => {
+      const day = moment(event.startDate).format(`YYYY-MM-DD`);
+      eventsDays.push(day);
+    });
+    return [...new Set(eventsDays)].sort();
+  }
+
   // рендерит в DOM элементы "День" и сохраняет ссылки на них
-  renderDays(tripDays) {
+  renderDays(events, isDayShow) {
     this.unrenderDays();
-    for (let i = 0; i < tripDays.length; i++) {
-      const tripDay = new TripDay(tripDays[i].length, i + 1, tripDays[i][0].startDate);
+    const days = this.getEventDays(events);
+    days.forEach((day, i) => {
+      const dayEvents = events.filter((event) => moment(event.startDate).format(`YYYY-MM-DD`) === day);
+      const tripDay = new TripDay(dayEvents.length, i + 1, day, isDayShow);
       this._tripDayElements.push(tripDay);
-      render(this._container, tripDay.getElement(this._formState), Position.BEFOREEND);
-      this.renderDayEvents(tripDay._element, tripDays[i]);
-    }
+      render(this._container, tripDay.getElement(), Position.BEFOREEND);
+      this.renderDayEvents(tripDay._element, dayEvents);
+    });
+
   }
 
   renderDayEvents(container, events) {
     const eventSlots = [...container.querySelectorAll(`.trip-events__item`)];
     eventSlots.forEach((slot, i) => {
       const pointController = new PointController(slot, events[i], this._onDataChange, this._onChangeView);
+      this._subscriptions.push(pointController.setDefaultView);
       pointController.render();
     });
   }
@@ -93,37 +107,30 @@ class TripController {
       }
     };
 
-    this._tripDaysSorted = JSON.parse(JSON.stringify(this._tripDays));
-    this._tripDaysSorted.forEach((dayEvents) => {
-      dayEvents.sort((a, b) => {
-        return compareEvents(a, b, sortBy);
-      });
-    });
-    this.unrenderDays();
-    this.renderDays(sortBy === `event` ? this._tripDays : this._tripDaysSorted);
+    if (sortBy === `event`) {
+      this.renderDays(this._events, true);
+    } else {
+      this._eventsSorted = JSON.parse(JSON.stringify(this._events));
+      this._eventsSorted.sort((a, b) => compareEvents(a, b, sortBy));
+      this.renderDays(this._eventsSorted, false);
+    }
   }
 
   // коллбек на изменение данных, вызывается в pointController в контексте tripController
-  _onDataChange({type, destinationPoint, description, startDate, endDate, cost, id, offers}) {
-    let event = null;
-    this._tripDays.forEach((day) => {
-      const index = day.findIndex((item) => item.id === id);
-      if (index !== -1) {
-        event = day[index];
-      }
-    });
+  _onDataChange({type, destinationPoint, startDate, endDate, cost, id, offers}) {
+
+    const event = this._events.find((item) => item.id === id);
     event.type = type;
     event.destinationPoint = destinationPoint;
     event.startDate = startDate;
-    event.description = description;
     event.endDate = endDate;
     event.cost = cost;
     event.offers = offers;
-    this.renderDays(this._tripDays);
+    this.renderDays(this._events, this._sort._items[0].isEnabled);
   }
 
-  _onChangeView(state) {
-    this._isFormActive = state.isFormActive;
+  _onChangeView() {
+    this._subscriptions.forEach((subscription) => subscription());
   }
 }
 

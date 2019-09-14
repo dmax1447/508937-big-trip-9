@@ -9,15 +9,15 @@ import {render, createElement} from './components/utils.js';
 import {Position} from './components/constants.js';
 
 
-const DAYS_COUNT = 3;
+const DAYS_COUNT = 0;
 const EVENTS_IN_DAY_COUNT = 4;
 
 /**
  * подготовка и рендер информации о поездке
- * @param {Array} tripDays массив дней с данными
+ * @param {Array} events массив событий
  */
-const renderTripInfo = (tripDays) => {
-  const tripInfo = new TripInfo(tripDays);
+const renderTripInfo = (events) => {
+  const tripInfo = new TripInfo(events);
   const tripInfoContainer = document.querySelector(`.trip-main__trip-info`);
   render(tripInfoContainer, tripInfo.getElement(), Position.AFTERBEGIN);
   document.querySelector(`.trip-info__cost-value`).textContent = tripInfo._totalCost;
@@ -55,14 +55,18 @@ const renderTripDaysContainer = () => {
 const init = () => {
   // готовим исходные данные, массив дней, в каждом дне массив событий
   let idCount = 0;
-  const tripDays = new Array(DAYS_COUNT).fill(``).map(() => new Array(EVENTS_IN_DAY_COUNT).fill(``).map(() => getTripEventData(idCount += 1)));
-  const tripDays2 = new Array(DAYS_COUNT * EVENTS_IN_DAY_COUNT).fill(``).map(() => getTripEventData(idCount += 1));
+
+  const tripEvents = new Array(DAYS_COUNT * EVENTS_IN_DAY_COUNT).fill(``).map(() => getTripEventData(idCount += 1));
+
+  // ----
   // рендерим инфу о поездке, меню, фильтр, сортировку, и контейнер для дней путешествия
-  renderTripInfo(tripDays);
+  if (tripEvents.length > 0) {
+    renderTripInfo(tripEvents);
+  }
   renderMenu();
   renderFilter();
   const tripDaysContainer = renderTripDaysContainer();
-  const tripController = new TripController(tripDaysContainer, tripDays);
+  const tripController = new TripController(tripDaysContainer, tripEvents);
   tripController.init();
 };
 

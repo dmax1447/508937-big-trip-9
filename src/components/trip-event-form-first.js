@@ -1,5 +1,4 @@
 import AbstractComponent from './abstract.js';
-// import {LOCALE, EVENT_TO_TEXT_MAP, EVENT_FORM_DATE_FORMAT} from './constants.js';
 
 class TripEventFormFirst extends AbstractComponent {
   constructor() {
