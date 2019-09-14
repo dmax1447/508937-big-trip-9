@@ -1,7 +1,7 @@
 import AbstractComponent from './abstract.js';
 import moment from 'moment';
 
-class TripDay extends AbstractComponent {
+class Day extends AbstractComponent {
   constructor(eventsCount, dayCounter, date, isDayShow) {
     super();
     this._eventsCount = eventsCount;
@@ -32,4 +32,4 @@ class TripDay extends AbstractComponent {
   }
 }
 
-export default TripDay;
+export default Day;

@@ -1,5 +1,5 @@
 
-import TripDay from './trip-day.js';
+import Day from './day.js';
 import Sort from './sort.js';
 import PointController from './point-controller';
 import TripEventFormFirst from './trip-event-form-first';
@@ -68,7 +68,7 @@ class TripController {
     const days = this.getEventDays(events);
     days.forEach((day, i) => {
       const dayEvents = events.filter((event) => moment(event.startDate).format(`YYYY-MM-DD`) === day);
-      const tripDay = new TripDay(dayEvents.length, i + 1, day, isDayShow);
+      const tripDay = new Day(dayEvents.length, i + 1, day, isDayShow);
       this._tripDayElements.push(tripDay);
       render(this._container, tripDay.getElement(), Position.BEFOREEND);
       this.renderDayEvents(tripDay._element, dayEvents);
