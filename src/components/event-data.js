@@ -33,7 +33,7 @@ const generateRandomArr = (mokdata, maxLength) => {
 
 const getEventData = (id) => {
   const startDate = Math.round(Date.now() + 3 * MILISECONDS_PER_DAY * Math.random() + 3 * MILISECONDS_PER_HOUR + (Math.random() * MILISECONDS_PER_HOUR));
-  const endDate = startDate + 3 * MILISECONDS_PER_HOUR * Math.random();
+  const endDate = Math.round(startDate + 3 * MILISECONDS_PER_HOUR * Math.random());
 
   return ({
     type: getRandomElement(POINT_TYPES),

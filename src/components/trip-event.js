@@ -1,5 +1,6 @@
 import AbstractComponent from './abstract.js';
-import {MILISECONDS_PER_HOUR, MILISECONDS_PER_MINUTE, LOCALE, EVENT_TO_TEXT_MAP, EVENT_TIME_FORMAT} from './constants.js';
+import moment from 'moment';
+import {MILISECONDS_PER_HOUR, MILISECONDS_PER_MINUTE, EVENT_TO_TEXT_MAP, MILISECONDS_PER_DAY} from './constants.js';
 
 class TripEvent extends AbstractComponent {
   constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers}) {
@@ -24,11 +25,19 @@ class TripEvent extends AbstractComponent {
     `.trim();
   }
 
+  _getDuration() {
+    const duration = this._endDate - this._startDate;
+    const durationDays = Math.floor(duration / MILISECONDS_PER_DAY);
+    const durationHours = Math.floor((duration - durationDays * MILISECONDS_PER_DAY) / MILISECONDS_PER_HOUR);
+    const durationMinutes = Math.round((duration - durationDays * MILISECONDS_PER_DAY - durationHours * MILISECONDS_PER_HOUR) / MILISECONDS_PER_MINUTE);
+    const daysStr = durationDays ? `${durationDays}D` : ``;
+    const hoursStr = durationHours ? `${durationHours}H` : ``;
+    const minutesStr = durationMinutes ? `${durationMinutes}M` : ``;
+    return `${daysStr} ${hoursStr} ${minutesStr}`;
+  }
+
   getTemplate() {
     const enabledOffers = this._offers.filter((item) => item.isEnabled);
-    const duration = this._endDate - this._startDate;
-    const duraionHours = Math.floor(duration / MILISECONDS_PER_HOUR);
-    const durationMinutes = Math.round((duration - MILISECONDS_PER_HOUR * duraionHours) / MILISECONDS_PER_MINUTE);
 
     return `
       <div class="event">
@@ -39,11 +48,11 @@ class TripEvent extends AbstractComponent {
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T10:30">${new Date(this._startDate).toLocaleString(LOCALE, EVENT_TIME_FORMAT)}</time>
+            <time class="event__start-time" datetime="2019-03-18T10:30">${moment(this._startDate).format(`kk:mm`)}</time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-18T11:00">${new Date(this._endDate).toLocaleString(LOCALE, EVENT_TIME_FORMAT)}</time>
+            <time class="event__end-time" datetime="2019-03-18T11:00">${moment(this._endDate).format(`kk:mm`)}</time>
           </p>
-          <p class="event__duration">${duraionHours ? duraionHours + `H` : ``} ${durationMinutes ? durationMinutes + `M` : ``}</p>
+          <p class="event__duration">${this._getDuration()}</p>
         </div>
 
         <p class="event__price">

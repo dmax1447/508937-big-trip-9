@@ -41,8 +41,8 @@ class PointController {
         type: data.get(`event-type`),
         destinationPoint: data.get(`event-destination`),
         description: data.get(``),
-        startDate: moment(data.get(`event-start-time`), `DD-MM-YY HH-MM`),
-        endDate: moment(data.get(`event-end-time`), `DD-MM-YY HH-MM`),
+        startDate: moment(data.get(`event-start-time`), `DD-MM-YY kk-mm`),
+        endDate: moment(data.get(`event-end-time`), `DD-MM-YY kk-mm`),
         cost: parseInt(data.get(`event-price`), 10),
         offers: data.getAll(`event-offer`).reduce((acc, offerName) => {
           const offer = acc.find((item) => item.name === offerName);
