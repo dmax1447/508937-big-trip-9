@@ -1,7 +1,6 @@
 const MILISECONDS_PER_MINUTE = 1000 * 60;
 const MILISECONDS_PER_HOUR = MILISECONDS_PER_MINUTE * 60;
 const MILISECONDS_PER_DAY = MILISECONDS_PER_HOUR * 24;
-const LOCALE = `en-US`;
 
 const EVENT_TO_TEXT_MAP = new Map(
     [
@@ -26,21 +25,6 @@ const EVENT_FORM_DATE_FORMAT =
     dateFormat: `d/m/y H:i`,
   };
 
-const EVENT_TIME_FORMAT = {
-  hour: `2-digit`,
-  minute: `2-digit`,
-  hour12: false,
-};
-
-const DAY_DATE_FORMAT = {
-  month: `short`,
-  day: `2-digit`,
-};
-
-const INFO_DATE_FORMAT = {
-  month: `short`
-};
-
 const Position = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`
@@ -50,11 +34,8 @@ export {
   MILISECONDS_PER_DAY,
   MILISECONDS_PER_HOUR,
   MILISECONDS_PER_MINUTE,
-  LOCALE, EVENT_TO_TEXT_MAP,
+  EVENT_TO_TEXT_MAP,
   EVENT_FORM_DATE_FORMAT,
-  EVENT_TIME_FORMAT,
-  DAY_DATE_FORMAT,
-  INFO_DATE_FORMAT,
   Position,
 };
 
