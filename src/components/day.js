@@ -12,7 +12,6 @@ class Day extends AbstractComponent {
   }
 
   getTemplate() {
-
     return `
     <li class="trip-days__item  day">
       <div class="day__info">
@@ -26,6 +25,7 @@ class Day extends AbstractComponent {
     `.trim();
   }
 
+  // вернет разметку слотов под события
   getEventSlotTemplates(slotsCount) {
     const slots = new Array(slotsCount).fill(``).map(() => `<li class="trip-events__item"></li>`);
     return slots.join(``);

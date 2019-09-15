@@ -53,6 +53,7 @@ class TripController {
     });
   }
 
+  // соберает массив уникальных дат событий
   getEventDays(events) {
     const eventsDays = [];
     events.forEach((event) => {
@@ -62,7 +63,7 @@ class TripController {
     return [...new Set(eventsDays)].sort();
   }
 
-  // рендерит в DOM элементы "День" и сохраняет ссылки на них
+  // рендерит разметку дней, сортировку, события в дни
   renderDays(events, isDayShow) {
     this.unrenderDays();
     const days = this.getEventDays(events);
@@ -76,6 +77,7 @@ class TripController {
 
   }
 
+  // рендерит в контейнер "день" события дня
   renderDayEvents(container, events) {
     const eventSlots = [...container.querySelectorAll(`.trip-events__item`)];
     eventSlots.forEach((slot, i) => {
@@ -94,7 +96,7 @@ class TripController {
   }
 
 
-  // сортирует массив данных на месте, и перерендрит дни на основе отсортированных данных
+  // сортирует события, и перерендрит дни на основе отсортированных данных
   sortEvents(sortBy) {
     const compareEvents = (a, b, field) => {
       switch (field) {
@@ -129,6 +131,7 @@ class TripController {
     this.renderDays(this._events, this._sort._items[0].isEnabled);
   }
 
+  // коллбек на открытие формы редактирования (закрывает остальные формы)
   _onChangeView() {
     this._subscriptions.forEach((subscription) => subscription());
   }

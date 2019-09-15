@@ -6,7 +6,7 @@ const createElement = (template) => {
   return newElement.firstChild;
 };
 
-// Рендер и анрендер для компонент
+// рендер компонента
 const render = (container, element, place) => {
   switch (place) {
     case Position.AFTERBEGIN:
@@ -18,6 +18,7 @@ const render = (container, element, place) => {
   }
 };
 
+// удаление компонента
 const unrender = (element) => {
   if (element) {
     element._element.remove();

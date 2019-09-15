@@ -12,7 +12,7 @@ const MIDDLE_POINT_EMPTY_MARK = `&mdash; ... &mdash;`;
 class TripInfo extends AbstractComponent {
   constructor(events) {
     super();
-
+    // распределим события по дням (так как они отображаются по умолчанию (сортировка по events))
     this._events = [...events].sort((a, b) => {
       const dayA = moment(a.startDate).format(`YYYY-MM-DD`);
       const dayB = moment(b.startDate).format(`YYYY-MM-DD`);

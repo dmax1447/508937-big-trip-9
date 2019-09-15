@@ -15,6 +15,7 @@ class TripEvent extends AbstractComponent {
     this._offers = offers;
   }
 
+  // вернет шаблон предложения
   getOfferTemplate(offer) {
     return `
     <li class="event__offer">
@@ -25,6 +26,7 @@ class TripEvent extends AbstractComponent {
     `.trim();
   }
 
+  // рассчитывает длительность события и возвращает ее в виде строки
   _getDuration() {
     const duration = this._endDate - this._startDate;
     const durationDays = Math.floor(duration / MILISECONDS_PER_DAY);

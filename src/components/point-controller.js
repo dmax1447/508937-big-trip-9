@@ -17,21 +17,25 @@ class PointController {
     this.setDefaultView = this.setDefaultView.bind(this);
   }
 
+  // рендер события
   render() {
     const openBtn = this._eventElement.querySelector(`.event__rollup-btn`);
     const closeBtn = this._eventFormElement.querySelector(`.event__rollup-btn`);
 
+    // клик по кнопке открыть
     const onBtnOpenFormClick = () => {
-      this._onChangeView();
+      this._onChangeView(); // зовем метод в TripController закрываем все остальные открытые формы
       this._container.replaceChild(this._eventFormElement, this._eventElement);
       document.addEventListener(`keydown`, onEscKeyDown);
     };
 
+    // клик по кнопке открыть
     const onBtnCloseFormClick = () => {
       this._container.replaceChild(this._eventElement, this._eventFormElement);
       document.removeEventListener(`keydown`, onEscKeyDown);
     };
 
+    // обработка события отправка формы / сохранить
     const onFormSubmit = (evt) => {
       evt.preventDefault();
       this._container.replaceChild(this._eventElement, this._eventFormElement);
@@ -76,6 +80,7 @@ class PointController {
       this._onDataChange(entry);
     };
 
+    // нажатие esc
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
         this._container.replaceChild(this._eventElement, this._eventFormElement);
@@ -90,6 +95,7 @@ class PointController {
     flatpickr(this._eventFormElement.querySelectorAll(`.event__input--time`), EVENT_FORM_DATE_FORMAT);
   }
 
+  // коллбек сброса на стандартный вид из режима редактирования
   setDefaultView() {
     if (this._container.contains(this._eventFormElement)) {
       this._container.replaceChild(this._eventElement, this._eventFormElement);

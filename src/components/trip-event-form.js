@@ -16,6 +16,7 @@ class TripEventForm extends AbstractComponent {
     this._isFavorite = isFavorite;
   }
 
+  // вернет шаблон предложения
   getOfferTemplate({name, cost, isEnabled}) {
     return `
     <div class="event__offer-selector">
