@@ -1,8 +1,8 @@
 import AbstractComponent from './abstract.js';
-import {LOCALE, EVENT_TO_TEXT_MAP, EVENT_FORM_DATE_FORMAT} from './constants.js';
+import moment from 'moment';
 
 class TripEventForm extends AbstractComponent {
-  constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers}) {
+  constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers, isFavorite, placeholder}) {
     super();
     this._type = type;
     this._destinationPoint = destinationPoint;
@@ -12,12 +12,15 @@ class TripEventForm extends AbstractComponent {
     this._endDate = endDate;
     this._cost = cost;
     this._offers = offers;
+    this._isFavorite = isFavorite;
+    this._placeholder = placeholder;
   }
 
+  // вернет шаблон предложения
   getOfferTemplate({name, cost, isEnabled}) {
     return `
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}" type="checkbox" name="event-offer-luggage" ${isEnabled ? `checked` : ``}>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}" type="checkbox" name="event-offer" value="${name}" ${isEnabled ? `checked` : ``}>
       <label class="event__offer-label" for="event-offer-${name}">
         <span class="event__offer-title">${name}</span>
         &plus;
@@ -29,7 +32,6 @@ class TripEventForm extends AbstractComponent {
 
   getTemplate() {
     return `
-    <li class="trip-events__item">
       <form class="event  event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
@@ -44,37 +46,37 @@ class TripEventForm extends AbstractComponent {
                 <legend class="visually-hidden">Transfer</legend>
 
                 <div class="event__type-item">
-                  <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
+                  <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${this._type === `taxi` ? `checked` : ``}>
                   <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
                 </div>
 
                 <div class="event__type-item">
-                  <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
+                  <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${this._type === `bus` ? `checked` : ``}>
                   <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
                 </div>
 
                 <div class="event__type-item">
-                  <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
+                  <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${this._type === `train` ? `checked` : ``}>
                   <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
                 </div>
 
                 <div class="event__type-item">
-                  <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
+                  <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${this._type === `ship` ? `checked` : ``}>
                   <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
                 </div>
 
                 <div class="event__type-item">
-                  <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport">
+                  <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${this._type === `transport` ? `checked` : ``}>
                   <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
                 </div>
 
                 <div class="event__type-item">
-                  <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
+                  <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${this._type === `drive` ? `checked` : ``}>
                   <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
                 </div>
 
                 <div class="event__type-item">
-                  <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+                  <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${this._type === `flight` ? `checked` : ``}>
                   <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
                 </div>
               </fieldset>
@@ -83,17 +85,17 @@ class TripEventForm extends AbstractComponent {
                 <legend class="visually-hidden">Activity</legend>
 
                 <div class="event__type-item">
-                  <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
+                  <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${this._type === `check-in` ? `checked` : ``}>
                   <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
                 </div>
 
                 <div class="event__type-item">
-                  <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
+                  <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" ${this._type === `sightseenig` ? `checked` : ``}>
                   <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
                 </div>
 
                 <div class="event__type-item">
-                  <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
+                  <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${this._type === `restaurant` ? `checked` : ``}>
                   <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
                 </div>
               </fieldset>
@@ -102,7 +104,7 @@ class TripEventForm extends AbstractComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${EVENT_TO_TEXT_MAP.get(this._type)}
+              ${this._placeholder}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${this._destinationPoint}" list="destination-list-1">
             <datalist id="destination-list-1">
@@ -116,12 +118,12 @@ class TripEventForm extends AbstractComponent {
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${new Date(this._startDate).toLocaleString(LOCALE, EVENT_FORM_DATE_FORMAT)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${moment(this._startDate).format(`DD.MM.YY kk:mm`)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${new Date(this._endDate).toLocaleString(LOCALE, EVENT_FORM_DATE_FORMAT)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${moment(this._endDate).format(`DD.MM.YY kk:mm`)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -135,7 +137,7 @@ class TripEventForm extends AbstractComponent {
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
 
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked>
+          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -174,7 +176,6 @@ class TripEventForm extends AbstractComponent {
           </section>
         </section>
       </form>
-    </li>
     `.trim();
   }
 }
