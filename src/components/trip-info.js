@@ -3,12 +3,6 @@ import moment from 'moment';
 
 const MIDDLE_POINT_EMPTY_MARK = `&mdash; ... &mdash;`;
 
-// const compareByDay = (a, b) => {
-//   const dayA = moment(a.startDate).format(`YYYY-MM-DD`);
-//   const dayB = moment(b.startDate).format(`YYYY-MM-DD`);
-//   return dayA > dayB ? 1 : -1;
-// };
-
 class TripInfo extends AbstractComponent {
   constructor(events) {
     super();
