@@ -9,7 +9,7 @@ import 'flatpickr/dist/themes/light.css';
 import {render, createElement} from './components/utils.js';
 import {Position} from './components/constants.js';
 
-const EVENTS_COUNT = 15;
+const EVENTS_COUNT = 12;
 
 /**
  * подготовка и рендер информации о поездке

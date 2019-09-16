@@ -1,9 +1,8 @@
 import AbstractComponent from './abstract.js';
-import {EVENT_TO_TEXT_MAP} from './constants.js';
 import moment from 'moment';
 
 class TripEventForm extends AbstractComponent {
-  constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers, isFavorite}) {
+  constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers, isFavorite, placeholder}) {
     super();
     this._type = type;
     this._destinationPoint = destinationPoint;
@@ -14,6 +13,7 @@ class TripEventForm extends AbstractComponent {
     this._cost = cost;
     this._offers = offers;
     this._isFavorite = isFavorite;
+    this._placeholder = placeholder;
   }
 
   // вернет шаблон предложения
@@ -104,7 +104,7 @@ class TripEventForm extends AbstractComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${EVENT_TO_TEXT_MAP.get(this._type)}
+              ${this._placeholder}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${this._destinationPoint}" list="destination-list-1">
             <datalist id="destination-list-1">
@@ -118,12 +118,12 @@ class TripEventForm extends AbstractComponent {
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${moment(this._startDate).format(`DD/MM/YY kk:mm`)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${moment(this._startDate).format(`DD.MM.YY kk:mm`)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${moment(this._endDate).format(`DD/MM/YY kk:mm`)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${moment(this._endDate).format(`DD.MM.YY kk:mm`)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
