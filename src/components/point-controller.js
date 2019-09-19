@@ -101,7 +101,6 @@ class PointController {
       this._container.replaceChild(this._eventElement, this._eventFormElement);
     }
   }
-
 }
 
 export default PointController;
