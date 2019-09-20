@@ -135,6 +135,17 @@ class TripController {
   _onChangeView() {
     this._subscriptions.forEach((subscription) => subscription());
   }
+
+  // покажет контейнер
+  show() {
+    this._container.classList.remove(`visually-hidden`);
+  }
+
+  // скроет контейнер
+  hide() {
+    this._container.classList.add(`visually-hidden`);
+  }
+
 }
 
 export default TripController;

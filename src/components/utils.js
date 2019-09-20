@@ -6,7 +6,12 @@ const createElement = (template) => {
   return newElement.firstChild;
 };
 
-// рендер компонента
+/**
+ * Вставка дом элемента в контейнер
+ * @param {*} container дом элемент куда вставляем
+ * @param {*} element элемент для вставки
+ * @param {*} place место вставки
+ */
 const render = (container, element, place) => {
   switch (place) {
     case Position.AFTERBEGIN:
@@ -18,7 +23,10 @@ const render = (container, element, place) => {
   }
 };
 
-// удаление компонента
+/**
+ * удаление дом элемента и ссылки на него
+ * @param {*} element для удаления
+ */
 const unrender = (element) => {
   if (element) {
     element._element.remove();
