@@ -119,15 +119,22 @@ class TripController {
   }
 
   // коллбек на изменение данных, вызывается в pointController в контексте tripController
-  _onDataChange({type, destinationPoint, startDate, endDate, cost, id, offers}) {
+  _onDataChange(newData, eventId) {
 
-    const event = this._events.find((item) => item.id === id);
-    event.type = type;
-    event.destinationPoint = destinationPoint;
-    event.startDate = startDate;
-    event.endDate = endDate;
-    event.cost = cost;
-    event.offers = offers;
+    if (newData !== null) {
+      const event = this._events.find((item) => item.id === eventId);
+      event.type = newData.type;
+      event.destinationPoint = newData.destinationPoint;
+      event.startDate = newData.startDate;
+      event.endDate = newData.endDate;
+      event.cost = newData.cost;
+      event.offers = newData.offers;
+    } else {
+      const eventIndex = this._events.findIndex((item) => item.id === eventId);
+      console.log(`delete event, index: ${eventIndex}`);
+    }
+
+
     this.renderDays(this._events, this._sort._items[0].isEnabled);
   }
 
