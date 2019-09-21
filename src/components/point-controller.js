@@ -78,7 +78,7 @@ class PointController {
         isFavorite: data.get(`event-favorite`),
         id: this._event.id,
       };
-      this._onDataChange(entry, this._event.id);
+      this._onDataChange(entry, this._event);
     };
 
     // нажатие esc
@@ -93,7 +93,7 @@ class PointController {
     const onBtnDeleteClick = () => {
       // this._container.replaceChild(this._eventElement, this._eventFormElement);
       // console.log(`delete`);
-      this._onDataChange(null);
+      this._onDataChange(null, this._event);
 
     };
 

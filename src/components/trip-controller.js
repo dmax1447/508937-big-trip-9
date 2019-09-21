@@ -2,11 +2,13 @@
 import Day from './day.js';
 import Sort from './sort.js';
 import PointController from './point-controller';
-import TripEventFormFirst from './trip-event-form-first';
-import {Position} from './constants.js';
+import TripEventFormNew from './trip-event-form-new';
+import TripInfo from './trip-info.js';
+
+import {Position, EVENT_FORM_DATE_FORMAT} from './constants.js';
 import {render, unrender} from './utils.js';
 import moment from 'moment';
-
+import flatpickr from 'flatpickr';
 
 class TripController {
   constructor(container, events) {
@@ -15,21 +17,86 @@ class TripController {
     this._eventsSorted = [];
     this._formState = {isActive: false};
     this._sort = new Sort();
+    this._tripInfo = new TripInfo(events);
     this._tripDayElements = [];
     this._isFormActive = false;
     this._onDataChange = this._onDataChange.bind(this);
     this._onChangeView = this._onChangeView.bind(this);
+    this._tripEventFormNew = new TripEventFormNew();
     this._subscriptions = [];
   }
 
   // начальная инициализация
   init() {
+    this.renderTripInfo(this._events);
     this.renderSort();
+    this.renderTripEventNewForm();
     this.renderDays(this._events, true);
-    if (this._events.length === 0) {
-      const tripEventFormFirst = new TripEventFormFirst();
-      render(this._container, tripEventFormFirst.getElement(), Position.BEFOREEND);
+  }
+
+  // рендер информации о поездке
+  renderTripEventNewForm() {
+    const element = this._tripEventFormNew.getElement();
+    render(this._container, element, Position.BEFOREEND);
+    document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
+      this._onChangeView();
+      this._tripEventFormNew.show();
+    });
+
+    const onFormSubmit = (evt) => {
+      evt.preventDefault();
+      // document.removeEventListener(`keydown`, onEscKeyDown);
+      const data = new FormData(element);
+      const entry = {
+        type: data.get(`event-type`),
+        destinationPoint: data.get(`event-destination`),
+        description: data.get(``),
+        startDate: moment(data.get(`event-start-time`), `DD-MM-YY kk-mm`),
+        endDate: moment(data.get(`event-end-time`), `DD-MM-YY kk-mm`),
+        cost: parseInt(data.get(`event-price`), 10),
+        offers: data.getAll(`event-offer`).reduce((acc, offerName) => {
+          const offer = acc.find((item) => item.name === offerName);
+          offer.isEnabled = true;
+          return acc;
+        }, [
+          {
+            name: `Add luggage`,
+            cost: 10,
+            isEnabled: false,
+          },
+          {
+            name: `Switch to comfort`,
+            cost: 150,
+            isEnabled: false,
+          },
+          {
+            name: `Add meal`,
+            cost: 2,
+            isEnabled: false,
+          },
+          {
+            name: `Choose seats`,
+            cost: 9,
+            isEnabled: false,
+          },
+        ]),
+        isFavorite: data.get(`event-favorite`),
+        id: null,
+      };
+      this._onDataChange(entry, null);
+    };
+    flatpickr(element.querySelectorAll(`.event__input--time`), EVENT_FORM_DATE_FORMAT);
+    element.addEventListener(`submit`, onFormSubmit);
+  }
+
+  renderTripInfo() {
+    if (this._tripInfo._element) {
+      unrender(this._tripInfo);
     }
+    this._tripInfo = new TripInfo(this._events);
+    const tripInfoContainer = document.querySelector(`.trip-main__trip-info`);
+    render(tripInfoContainer, this._tripInfo.getElement(), Position.AFTERBEGIN);
+    document.querySelector(`.trip-info__cost-value`).textContent = this._tripInfo._totalCost;
   }
 
   // рендер сортировки: подвешивание обработчиков
@@ -66,6 +133,9 @@ class TripController {
   // рендерит разметку дней, сортировку, события в дни
   renderDays(events, isDayShow) {
     this.unrenderDays();
+    if (this._events.length > 0) {
+      this._tripEventFormNew.hide();
+    }
     const days = this.getEventDays(events);
     days.forEach((day, i) => {
       const dayEvents = events.filter((event) => moment(event.startDate).format(`YYYY-MM-DD`) === day);
@@ -95,7 +165,6 @@ class TripController {
     this._tripDayElements = [];
   }
 
-
   // сортирует события, и перерендрит дни на основе отсортированных данных
   sortEvents(sortBy) {
     const compareEvents = (a, b, field) => {
@@ -118,23 +187,41 @@ class TripController {
     }
   }
 
-  // коллбек на изменение данных, вызывается в pointController в контексте tripController
-  _onDataChange(newData, eventId) {
-
-    if (newData !== null) {
-      const event = this._events.find((item) => item.id === eventId);
+  /**
+   * коллбек обработки изменений данных события
+   * @param {Object} newData новые данные события
+   * @param {Object} oldData старые данные события
+   */
+  _onDataChange(newData, oldData) {
+    if (newData !== null && oldData !== null) {
+      const event = this._events.find((item) => item.id === oldData.id);
       event.type = newData.type;
       event.destinationPoint = newData.destinationPoint;
       event.startDate = newData.startDate;
       event.endDate = newData.endDate;
       event.cost = newData.cost;
       event.offers = newData.offers;
-    } else {
-      const eventIndex = this._events.findIndex((item) => item.id === eventId);
-      console.log(`delete event, index: ${eventIndex}`);
     }
 
+    if (newData === null) {
+      const eventIndex = this._events.findIndex((item) => item.id === oldData.id);
+      this._events.splice(eventIndex, 1);
+    }
 
+    if (oldData === null) {
+      newData.pics = [
+        `http://picsum.photos/300/150?r=${Math.random()}`,
+        `http://picsum.photos/300/150?r=${Math.random()}`,
+        `http://picsum.photos/300/150?r=${Math.random()}`,
+        `http://picsum.photos/300/150?r=${Math.random()}`,
+        `http://picsum.photos/300/150?r=${Math.random()}`,
+      ];
+
+      newData.id = this._events[this._events.length - 1].id + 1;
+      this._events.push(newData);
+    }
+
+    this.renderTripInfo(this.events);
     this.renderDays(this._events, this._sort._items[0].isEnabled);
   }
 
@@ -152,7 +239,6 @@ class TripController {
   hide() {
     this._container.classList.add(`visually-hidden`);
   }
-
 }
 
 export default TripController;

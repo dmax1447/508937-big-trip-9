@@ -59,7 +59,7 @@ const init = () => {
 
   // рендерим инфу о поездке, меню, фильтр, сортировку, и контейнер для дней путешествия
   if (tripEvents.length > 0) {
-    renderTripInfo(tripEvents);
+    // renderTripInfo(tripEvents);
   }
   renderMenu();
   renderFilter();

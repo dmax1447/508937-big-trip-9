@@ -24,14 +24,6 @@ class Statistics extends AbstractComponent {
     </section>
     `.trim();
   }
-
-  hide() {
-    this._element.classList.add(`visually-hidden`);
-  }
-
-  show() {
-    this._element.classList.remove(`visually-hidden`);
-  }
 }
 
 export default Statistics;

@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract.js';
 
-class TripEventFormFirst extends AbstractComponent {
+class TripEventFormNew extends AbstractComponent {
   constructor() {
     super();
   }
@@ -118,4 +118,4 @@ class TripEventFormFirst extends AbstractComponent {
   }
 }
 
-export default TripEventFormFirst;
+export default TripEventFormNew;
