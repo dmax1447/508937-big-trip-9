@@ -21,6 +21,7 @@ class PointController {
   render() {
     const openBtn = this._eventElement.querySelector(`.event__rollup-btn`);
     const closeBtn = this._eventFormElement.querySelector(`.event__rollup-btn`);
+    const deleteBtn = this._eventFormElement.querySelector(`.event__reset-btn`);
 
     // клик по кнопке открыть
     const onBtnOpenFormClick = () => {
@@ -77,7 +78,7 @@ class PointController {
         isFavorite: data.get(`event-favorite`),
         id: this._event.id,
       };
-      this._onDataChange(entry);
+      this._onDataChange(entry, this._event);
     };
 
     // нажатие esc
@@ -88,9 +89,19 @@ class PointController {
       document.removeEventListener(`keydown`, onEscKeyDown);
     };
 
+    // клик по удалить
+    const onBtnDeleteClick = () => {
+      // this._container.replaceChild(this._eventElement, this._eventFormElement);
+      // console.log(`delete`);
+      this._onDataChange(null, this._event);
+
+    };
+
     openBtn.addEventListener(`click`, onBtnOpenFormClick);
     closeBtn.addEventListener(`click`, onBtnCloseFormClick);
+    deleteBtn.addEventListener(`click`, onBtnDeleteClick);
     this._eventFormElement.addEventListener(`submit`, onFormSubmit);
+
     render(this._container, this._eventElement, Position.BEFOREEND);
     flatpickr(this._eventFormElement.querySelectorAll(`.event__input--time`), EVENT_FORM_DATE_FORMAT);
   }
