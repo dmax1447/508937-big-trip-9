@@ -1,14 +1,14 @@
 import AbstractComponent from './abstract.js';
 
 class Menu extends AbstractComponent {
-  constructor() {
+  constructor(menuState) {
     super();
-    this._items = [{name: `Table`, isActive: true}, {name: `Stats`, isActive: false}];
+    this._items = menuState;
   }
 
   getTabTemplate(tab) {
     return `
-    <a class="trip-tabs__btn ${tab.isActive ? `trip-tabs__btn--active` : ``} href="#">${tab.name}</a>
+    <a class="trip-tabs__btn trip-tabs__btn--${tab.name} ${tab.isActive ? `trip-tabs__btn--active` : ``} href="#">${tab.name}</a>
     `.trim();
   }
 
