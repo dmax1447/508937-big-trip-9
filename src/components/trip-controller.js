@@ -1,14 +1,18 @@
+/* eslint-disable no-unused-vars */
 
 import Day from './day.js';
 import Sort from './sort.js';
 import PointController from './point-controller';
 import TripEventFormNew from './trip-event-form-new';
 import TripInfo from './trip-info.js';
-
-import {Position, EVENT_FORM_DATE_FORMAT} from './constants.js';
+import Statistics from './statistics.js';
+import Filter from './filter.js';
+import {Position, EVENT_FORM_DATE_FORMAT, MILISECONDS_PER_HOUR} from './constants.js';
 import {render, unrender} from './utils.js';
 import moment from 'moment';
 import flatpickr from 'flatpickr';
+import Chart from 'chart.js';
+// import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 class TripController {
   constructor(container, events) {
@@ -18,6 +22,8 @@ class TripController {
     this._formState = {isActive: false};
     this._sort = new Sort();
     this._tripInfo = new TripInfo(events);
+    this._statistics = new Statistics(events);
+    this._filter = new Filter();
     this._tripDayElements = [];
     this._isFormActive = false;
     this._onDataChange = this._onDataChange.bind(this);
@@ -32,6 +38,219 @@ class TripController {
     this.renderSort();
     this.renderTripEventNewForm();
     this.renderDays(this._events, true);
+    this.renderStat(this._events);
+    this._statistics.hide();
+    this.renderFilter();
+  }
+
+  renderFilter() {
+    const filterContainer = document.querySelector(`.trip-main__trip-controls`);
+    const element = this._filter.getElement();
+    render(filterContainer, element, Position.BEFOREEND);
+    const filterInputs = [...element.querySelectorAll(`.trip-filters__filter-input`)];
+
+    const onFilterTabClick = (evt) => {
+      const activeFilter = evt.target.value;
+      const today = (new Date()).valueOf();
+      let eventsFiltered = [];
+      switch (activeFilter) {
+        case `future`:
+          eventsFiltered = this._events.filter((event) => event.startDate > today);
+          break;
+        case `past`:
+          eventsFiltered = this._events.filter((event) => event.startDate < today);
+          break;
+        default:
+          break;
+      }
+      this.renderDays(activeFilter === `everything` ? this._events : eventsFiltered, true);
+    };
+
+    filterInputs.forEach((input) => input.addEventListener(`click`, onFilterTabClick));
+  }
+
+  renderStat(events) {
+    if (this._statistics._element) {
+      unrender(this._statistics);
+    }
+    const element = this._statistics.getElement();
+    const mainPageContainer = document.querySelector(`main .page-body__container`);
+    render(mainPageContainer, element, Position.BEFOREEND);
+    const moneyCtx = element.querySelector(`.statistics__chart--money`);
+    const transportCtx = element.querySelector(`.statistics__chart--transport`);
+    const timeSpendCtx = document.querySelector(`.statistics__chart--time`);
+
+    const moneyStat = {
+      fly: 0,
+      stay: 0,
+      drive: 0,
+      look: 0,
+      eat: 0,
+      ride: 0
+    };
+
+    const transportStat = {
+      drive: 0,
+      ride: 0,
+      fly: 0,
+      sail: 0,
+    };
+
+    const timeStat = {
+    };
+
+    events.forEach((event) => {
+      timeStat[event.type] = timeStat[event.type] === undefined ?
+        Math.round((event.endDate - event.startDate) / MILISECONDS_PER_HOUR) : timeStat[event.type] + Math.round((event.endDate - event.startDate) / MILISECONDS_PER_HOUR);
+      if (event.type === `flight`) {
+        moneyStat.fly += event.cost;
+        transportStat.fly += 1;
+      }
+      if (event.type === `check-in`) {
+        moneyStat.stay += event.cost;
+      }
+      if (event.type === `drive`) {
+        moneyStat.drive += event.cost;
+        transportStat.drive += 1;
+      }
+      if (event.type === `sightseeing`) {
+        moneyStat.look += event.cost;
+      }
+      if (event.type === `restaurant`) {
+        moneyStat.eat += event.cost;
+      }
+      if (event.type === `bus` || event.type === `taxi`) {
+        moneyStat.ride += event.cost;
+        transportStat.ride += 1;
+      }
+      if (event.type === `ship`) {
+        transportStat.sail += 1;
+      }
+    });
+
+    const moneyChart = new Chart(moneyCtx, {
+      type: `horizontalBar`,
+      data: {
+        labels: [...Object.keys(moneyStat)],
+        datasets: [{
+          label: `MONEY`,
+          data: [...Object.values(moneyStat)],
+          backgroundColor: `white`,
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            barThickness: 5,
+            gridLines: {
+              display: false
+            },
+            ticks: {
+              enabled: false,
+            }
+          }],
+          yAxes: [{
+            gridLines: {
+              display: false
+            },
+            ticks: {
+              enabled: true,
+              fontSize: 18,
+            }
+          }]
+        },
+      },
+    });
+
+    const transportChart = new Chart(transportCtx, {
+      type: `horizontalBar`,
+      data: {
+        labels: [...Object.keys(transportStat)],
+        datasets: [{
+          label: `TRANSPORT`,
+          data: [...Object.values(transportStat)],
+          backgroundColor: `white`,
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            barThickness: 5,
+            gridLines: {
+              display: false
+            },
+          }],
+          yAxes: [{
+            gridLines: {
+              display: false
+            },
+            ticks: {
+              enabled: true,
+              fontSize: 18,
+            }
+          }]
+        }
+      },
+    });
+
+    const timeChart = new Chart(timeSpendCtx, {
+      type: `horizontalBar`,
+      data: {
+        labels: [...Object.keys(timeStat)],
+        datasets: [{
+          label: `TIME`,
+          data: [...Object.values(timeStat)],
+          backgroundColor: `white`,
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            barThickness: 5,
+            gridLines: {
+              display: false
+            },
+          }],
+          yAxes: [{
+            gridLines: {
+              display: false
+            },
+            ticks: {
+              enabled: true,
+              fontSize: 18,
+            }
+          }]
+        }
+      },
+    });
+
+    const onMenuTabClick = (evt) => {
+      const tabName = evt.target.innerText;
+      switch (tabName) {
+        case `Table`:
+          this.show();
+          this._statistics.hide();
+          menuBtnTable.classList.add(`trip-tabs__btn--active`);
+          menuBtnStats.classList.remove(`trip-tabs__btn--active`);
+          break;
+        case `Stats`:
+          this.hide();
+          this._statistics.show();
+          menuBtnStats.classList.add(`trip-tabs__btn--active`);
+          menuBtnTable.classList.remove(`trip-tabs__btn--active`);
+          break;
+        default:
+          break;
+      }
+    };
+
+    const menuBtnTable = document.querySelector(`.trip-tabs__btn--Table`);
+    const menuBtnStats = document.querySelector(`.trip-tabs__btn--Stats`);
+    const menuBtns = [menuBtnTable, menuBtnStats];
+    menuBtns.forEach((btn) => btn.addEventListener(`click`, onMenuTabClick));
   }
 
   // рендер информации о поездке
@@ -187,11 +406,7 @@ class TripController {
     }
   }
 
-  /**
-   * коллбек обработки изменений данных события
-   * @param {Object} newData новые данные события
-   * @param {Object} oldData старые данные события
-   */
+  // обработка изменений данных
   _onDataChange(newData, oldData) {
     if (newData !== null && oldData !== null) {
       const event = this._events.find((item) => item.id === oldData.id);
@@ -223,6 +438,7 @@ class TripController {
 
     this.renderTripInfo(this.events);
     this.renderDays(this._events, this._sort._items[0].isEnabled);
+    this.renderStat(this._events);
   }
 
   // коллбек на открытие формы редактирования (закрывает остальные формы)

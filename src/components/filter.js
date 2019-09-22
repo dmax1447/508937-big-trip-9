@@ -22,8 +22,8 @@ class Filter extends AbstractComponent {
   getFilterItemTemplate(filter) {
     return `
     <div class="trip-filters__filter">
-      <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter.name}" ${filter.isEnabled ? `checked` : ``}>
-      <label class="trip-filters__filter-label" for="filter-everything">${filter.name}</label>
+      <input id="filter-${filter.name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter.name}" ${filter.isEnabled ? `checked` : ``}>
+      <label class="trip-filters__filter-label" for="filter-${filter.name}">${filter.name}</label>
     </div>
     `.trim();
   }
