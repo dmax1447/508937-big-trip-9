@@ -1,10 +1,10 @@
 
 import getTripEventData from './components/event-data';
 import Menu from './components/menu.js';
-import TripController from './components/trip-controller.js';
+import MainController from './components/main-controller.js';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
-import {render, createElement} from './components/utils.js';
+import {render} from './components/utils.js';
 import {Position} from './components/constants.js';
 
 const EVENTS_COUNT = 12;
@@ -18,26 +18,17 @@ const renderMenu = () => {
   render(menuContainer, menu.getElement(), Position.BEFOREEND);
 };
 
-/**
- * рендер контейнера для дней с событиями
- * @return {node} контейнер для дней c событиями
- */
-const renderTripDaysContainer = () => {
-  const tripEventsContainer = document.querySelector(`.trip-events`);
-  const tripDaysContainer = createElement(`<ul class="trip-days"></ul>`);
-  render(tripEventsContainer, tripDaysContainer, Position.BEFOREEND);
-  return tripDaysContainer;
-};
-
 const init = () => {
   // готовим исходные данные, массив дней, в каждом дне массив событий
   let idCount = 0;
   const tripEvents = new Array(EVENTS_COUNT).fill(``).map(() => getTripEventData(idCount += 1));
 
   renderMenu();
-  const tripDaysContainer = renderTripDaysContainer();
-  const tripController = new TripController(tripDaysContainer, tripEvents);
-  tripController.init();
+  // const tripDaysContainer = renderTripDaysContainer();
+  // const tripController = new TripController(tripDaysContainer, tripEvents);
+  // tripController.init();
+  const mainController = new MainController(tripEvents);
+  mainController.init();
 };
 
 init();
