@@ -5,7 +5,7 @@ import TripController from './trip-controller';
 import TripInfo from './trip-info.js';
 import Statistics from './statistics.js';
 import Filter from './filter.js';
-import {Position, EVENT_FORM_DATE_FORMAT, MILISECONDS_PER_HOUR} from './constants.js';
+import {Position, MILISECONDS_PER_HOUR} from './constants.js';
 import {render, unrender, createElement} from './utils.js';
 import Chart from 'chart.js';
 // import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -23,14 +23,14 @@ class MainController {
 
   // начальная инициализация
   init() {
-    // this.renderSort();
-    // this.renderFilter();
     this._renderStat();
     this._statistics.hide();
     this._renderTripInfo();
+    this._renderFilter();
     this._tripController.init();
   }
 
+  // подготовка контейнера для событий
   _renderTripDaysContainer() {
     const tripEventsContainer = document.querySelector(`.trip-events`);
     const tripDaysContainer = createElement(`<ul class="trip-days"></ul>`);
@@ -39,7 +39,7 @@ class MainController {
   }
 
   // рендер фильтров FUTURE / PAST / EVERYTHING и инициализация обработчиков нажатия на кнопки
-  renderFilter() {
+  _renderFilter() {
     const filterContainer = document.querySelector(`.trip-main__trip-controls`);
     const element = this._filter.getElement();
     render(filterContainer, element, Position.BEFOREEND);
@@ -59,7 +59,7 @@ class MainController {
         default:
           break;
       }
-      this.renderDays(activeFilter === `everything` ? this._events : eventsFiltered, true);
+      this._tripController.renderDays(activeFilter === `everything` ? this._events : eventsFiltered, true);
     };
 
     filterInputs.forEach((input) => input.addEventListener(`click`, onFilterTabClick));
@@ -261,30 +261,10 @@ class MainController {
     document.querySelector(`.trip-info__cost-value`).textContent = this._tripInfo._totalCost;
   }
 
-  // рендер сортировки: подвешивание обработчиков
-  renderSort() {
-    if (this._sort._element) {
-      unrender(this._sort);
-    }
-    render(this._container, this._sort.getElement(), Position.AFTERBEGIN);
-    const sortInputs = [...this._sort._element.querySelectorAll(`.trip-sort__input`)];
-    const onSortFieldClick = (evt) => {
-      const sortBy = evt.target.dataset.sortId;
-      this._sort._items.forEach((item) => {
-        item.isEnabled = (item.name === sortBy);
-      });
-      this.renderSort();
-      this.sortEvents(sortBy);
-    };
-
-    sortInputs.forEach((input) => {
-      input.addEventListener(`click`, onSortFieldClick);
-    });
-  }
-
   // обработка изменений данных
   _onDataChangeInTripController(data) {
-    this._events = data;
+    // оставил с прицелом на иммутабельность данных
+    // this._events = data;
     this._renderTripInfo();
     this._renderStat();
   }

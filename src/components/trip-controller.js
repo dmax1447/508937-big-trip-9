@@ -4,13 +4,10 @@ import Day from './day.js';
 import Sort from './sort.js';
 import PointController from './point-controller';
 import TripEventFormNew from './trip-event-form-new';
-// import Filter from './filter.js';
-import {Position, EVENT_FORM_DATE_FORMAT, MILISECONDS_PER_HOUR} from './constants.js';
+import {Position, EVENT_FORM_DATE_FORMAT} from './constants.js';
 import {render, unrender} from './utils.js';
 import moment from 'moment';
 import flatpickr from 'flatpickr';
-import Chart from 'chart.js';
-// import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 class TripController {
   constructor(container, events, onDataChangeMain) {
@@ -19,9 +16,7 @@ class TripController {
     this._events = events;
     this._eventsSorted = [];
     this._sort = new Sort();
-    // this._filter = new Filter();
     this._tripDayElements = [];
-    this._isFormActive = false;
     this._onDataChange = this._onDataChange.bind(this);
     this._onChangeView = this._onChangeView.bind(this);
     this._tripEventFormNew = new TripEventFormNew();
@@ -30,40 +25,13 @@ class TripController {
 
   // начальная инициализация
   init() {
-    this.renderSort();
-    this.renderTripEventNewForm();
+    this._renderSort();
+    this._renderTripEventNewForm();
     this.renderDays(this._events, true);
-    this.renderFilter();
   }
 
-  renderFilter() {
-    const filterContainer = document.querySelector(`.trip-main__trip-controls`);
-    const element = this._filter.getElement();
-    render(filterContainer, element, Position.BEFOREEND);
-    const filterInputs = [...element.querySelectorAll(`.trip-filters__filter-input`)];
-
-    const onFilterTabClick = (evt) => {
-      const activeFilter = evt.target.value;
-      const today = (new Date()).valueOf();
-      let eventsFiltered = [];
-      switch (activeFilter) {
-        case `future`:
-          eventsFiltered = this._events.filter((event) => event.startDate > today);
-          break;
-        case `past`:
-          eventsFiltered = this._events.filter((event) => event.startDate < today);
-          break;
-        default:
-          break;
-      }
-      this.renderDays(activeFilter === `everything` ? this._events : eventsFiltered, true);
-    };
-
-    filterInputs.forEach((input) => input.addEventListener(`click`, onFilterTabClick));
-  }
-
-  // рендер информации о поездке
-  renderTripEventNewForm() {
+  // рендер формы нового события
+  _renderTripEventNewForm() {
     const element = this._tripEventFormNew.getElement();
     render(this._container, element, Position.BEFOREEND);
     document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
@@ -73,7 +41,6 @@ class TripController {
 
     const onFormSubmit = (evt) => {
       evt.preventDefault();
-      // document.removeEventListener(`keydown`, onEscKeyDown);
       const data = new FormData(element);
       const entry = {
         type: data.get(`event-type`),
@@ -118,7 +85,7 @@ class TripController {
   }
 
   // рендер сортировки: подвешивание обработчиков
-  renderSort() {
+  _renderSort() {
     if (this._sort._element) {
       unrender(this._sort);
     }
@@ -129,7 +96,7 @@ class TripController {
       this._sort._items.forEach((item) => {
         item.isEnabled = (item.name === sortBy);
       });
-      this.renderSort();
+      this._renderSort();
       this._sortEvents(sortBy);
     };
 
@@ -234,10 +201,8 @@ class TripController {
       newData.id = this._events[this._events.length - 1].id + 1;
       this._events.push(newData);
     }
-
     this.onDataChangeMain(this._events);
     this.renderDays(this._events, this._sort._items[0].isEnabled);
-    // this.renderStat(this._events);
   }
 
   // коллбек на открытие формы редактирования (закрывает остальные формы)
