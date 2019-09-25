@@ -24,10 +24,10 @@ class TripController {
   }
 
   // начальная инициализация
-  init() {
+  init(destinations, offers) {
     this._renderSort();
     this._renderTripEventNewForm();
-    this.renderDays(this._events, true);
+    this.renderDays(this._events, true, destinations, offers);
   }
 
   // рендер формы нового события
@@ -116,7 +116,9 @@ class TripController {
   }
 
   // рендерит разметку дней, сортировку, события в дни
-  renderDays(events, isDayShow) {
+  renderDays(events, isDayShow, offers, destinations) {
+    console.log(destinations);
+    console.log(offers);
     this._unrenderDays();
     if (this._events.length > 0) {
       this._tripEventFormNew.hide();

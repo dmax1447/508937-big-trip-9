@@ -11,8 +11,10 @@ import Chart from 'chart.js';
 // import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 class MainController {
-  constructor(events) {
+  constructor(events, destinations, offers) {
     this._events = events;
+    this._destinations = destinations;
+    this._offers = offers;
     this._sort = new Sort();
     this._filter = new Filter();
     this._tripInfo = new TripInfo(events);
@@ -27,7 +29,7 @@ class MainController {
     this._statistics.hide();
     this._renderTripInfo();
     this._renderFilter();
-    this._tripController.init();
+    this._tripController.init(this._offers, this._destinations);
   }
 
   // подготовка контейнера для событий
