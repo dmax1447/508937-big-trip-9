@@ -5,7 +5,6 @@ class TripEventFormNew extends AbstractComponent {
     super();
     this._destinations = destinations;
     this._offers = offers;
-    // this._offersElement = null;
   }
 
   getTemplate() {
@@ -73,7 +72,7 @@ class TripEventFormNew extends AbstractComponent {
           <label class="event__label  event__type-output" for="event-destination-1">
             Sightseeing at
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="" list="destination-list-1" required>
           <datalist id="destination-list-1">
             ${this._destinations.map((item) => `<option value="${item.name}"></option>`).join(``).trim()}
           </datalist>
@@ -96,7 +95,7 @@ class TripEventFormNew extends AbstractComponent {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="" required>
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>

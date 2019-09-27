@@ -2,9 +2,9 @@ import AbstractComponent from './abstract.js';
 import {createElement} from './utils.js';
 
 class Offers extends AbstractComponent {
-  constructor(allOffers) {
+  constructor() {
     super();
-    this._alloffers = allOffers;
+    this.offers = [];
   }
 
   getTemplate(offers) {
@@ -19,22 +19,21 @@ class Offers extends AbstractComponent {
   }
 
   // вернет разметку слотов под события
-  _getOfferTemplate({name, price}) {
+  _getOfferTemplate({name, cost}) {
     return `
       <div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}" type="checkbox" name="event-offer" value="${name}">
         <label class="event__offer-label" for="event-offer-${name}">
           <span class="event__offer-title">${name}</span>
           &plus;
-          &euro;&nbsp;<span class="event__offer-price">${price}</span>
+          &euro;&nbsp;<span class="event__offer-price">${cost}</span>
         </label>
       </div>
     `.trim();
   }
 
-  getElement(eventType) {
-    const availbleOffers = (this._alloffers.find((item) => item.type === eventType)).offers;
-    this._element = createElement(this.getTemplate(availbleOffers));
+  getElement() {
+    this._element = createElement(this.getTemplate(this.offers));
     return this._element;
   }
 }

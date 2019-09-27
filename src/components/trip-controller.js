@@ -40,11 +40,17 @@ class TripController {
     const destinationInput = formElement.querySelector(`.event__input--destination`);
     const typeBtns = [...formElement.querySelectorAll(`.event__type-input`)];
     const addEventBtn = document.querySelector(`.trip-main__event-add-btn`);
+    const cancelBtn = formElement.querySelector(`.event__reset-btn`);
 
     // показ формы нового события по кнпке добавить новое
     addEventBtn.addEventListener(`click`, () => {
       this._onChangeView();
       this._tripEventFormNew.show();
+    });
+
+    // скрытие формы нового события по кнопке cancel нового события
+    cancelBtn.addEventListener(`click`, () => {
+      this._tripEventFormNew.hide();
     });
 
     // обработчик выбора типа события
@@ -69,15 +75,16 @@ class TripController {
     const onFormSubmit = (evt) => {
       evt.preventDefault();
       const formData = new FormData(formElement);
-      const type = formData.get(`event-type`);
       const offersChecked = formData.getAll(`event-offer`);
-      const destinationPoint = formData.get(`event-destination`);
       const offers = this._offersComponent.offers.map(offer => ({...offer, isEnabled: offersChecked.includes(offer.name)}));
-      const description = (this._destinations.find((item) => item.name === destinationPoint)).description;
+      const destinationPoint = formData.get(`event-destination`);
+      const destinationData = this._destinations.find((item) => (item.name === destinationPoint));
+
       const entry = {
-        type,
+        type: formData.get(`event-type`),
         destinationPoint,
-        description,
+        description: destinationData.description,
+        pics: destinationData.pictures.map((item) => item.src),
         startDate: moment(formData.get(`event-start-time`), `DD-MM-YY kk-mm`),
         endDate: moment(formData.get(`event-end-time`), `DD-MM-YY kk-mm`),
         cost: parseInt(formData.get(`event-price`), 10),
@@ -190,6 +197,7 @@ class TripController {
       event.endDate = newData.endDate;
       event.cost = newData.cost;
       event.offers = newData.offers;
+      event.isFavorite = newData.isFavorite;
     }
 
     if (newData === null) {
@@ -198,10 +206,6 @@ class TripController {
     }
 
     if (oldData === null) {
-      const destinationData = this._destinations.find((item) => (item.name === newData.destinationPoint));
-      const destinationOffers = (this._offers.find((item) => item.type === newData.type)).offers;
-      newData.description = destinationData.description;
-      newData.pics = destinationData.pictures.map((item) => item.src);
       newData.id = this._events[this._events.length - 1].id + 1;
       this._events.push(newData);
     }
