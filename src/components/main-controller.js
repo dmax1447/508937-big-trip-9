@@ -9,9 +9,13 @@ import {Position, MILISECONDS_PER_HOUR} from './constants.js';
 import {render, unrender, createElement} from './utils.js';
 import Chart from 'chart.js';
 // import ChartDataLabels from 'chartjs-plugin-datalabels';
+import API from './api.js';
+const END_POINT = `https://htmlacademy-es-9.appspot.com/big-trip/`;
+const AUTHORIZATION = `Basic kjhfdKJLfdsf${Math.random()}`;
 
 class MainController {
   constructor(events, destinations, offers) {
+    this.api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
     this._events = events;
     this._sort = new Sort();
     this._filter = new Filter();
@@ -28,6 +32,13 @@ class MainController {
     this._renderTripInfo();
     this._renderFilter();
     this._tripController.init();
+  }
+
+  loadEvents() {
+    return this.api.getEvents()
+      .then((events) => {
+        this._events = events;
+      });
   }
 
   // подготовка контейнера для событий
