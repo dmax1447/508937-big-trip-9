@@ -24,7 +24,7 @@ class TripController {
     this._onChangeView = this._onChangeView.bind(this);
     this._tripEventFormNew = new TripEventFormNew(this._destinations, this._offers);
     this._subscriptions = [];
-    this._offersComponent = new Offers(offers);
+    this._offersComponent = new Offers();
   }
 
   // начальная инициализация
@@ -39,16 +39,23 @@ class TripController {
     const formElement = this._tripEventFormNew.getElement();
     const destinationInput = formElement.querySelector(`.event__input--destination`);
     const typeBtns = [...formElement.querySelectorAll(`.event__type-input`)];
-    const submitBtn = document.querySelector(`.trip-main__event-add-btn`);
+    const addEventBtn = document.querySelector(`.trip-main__event-add-btn`);
 
-    // обработчик выбора типа
+    // показ формы нового события по кнпке добавить новое
+    addEventBtn.addEventListener(`click`, () => {
+      this._onChangeView();
+      this._tripEventFormNew.show();
+    });
+
+    // обработчик выбора типа события
     const onTypeChange = (evt) => {
       const eventType = evt.target.value;
       if (this._offersComponent._element) {
         unrender(this._offersComponent);
       }
       formElement.querySelector(`.event__type-output`).innerText = EVENT_TO_TEXT_MAP.get(eventType);
-      render(formElement, this._offersComponent.getElement(eventType), Position.BEFOREEND);
+      this._offersComponent.offers = (this._offers.find((item) => item.type === eventType)).offers;
+      render(formElement, this._offersComponent.getElement(), Position.BEFOREEND);
     };
     typeBtns.forEach((btn) => btn.addEventListener(`click`, onTypeChange));
 
@@ -58,19 +65,14 @@ class TripController {
     };
     destinationInput.addEventListener(`change`, onDestinationChange);
 
-    submitBtn.addEventListener(`click`, () => {
-      this._onChangeView();
-      this._tripEventFormNew.show();
-    });
-
+    // обработчик сохранения данных нового события
     const onFormSubmit = (evt) => {
       evt.preventDefault();
       const formData = new FormData(formElement);
       const type = formData.get(`event-type`);
-      const availbleOffers = (this._offers.find((item) => item.type === type)).offers;
       const offersChecked = formData.getAll(`event-offer`);
       const destinationPoint = formData.get(`event-destination`);
-      const offers = null;
+      const offers = this._offersComponent.offers.map(offer => ({...offer, isEnabled: offersChecked.includes(offer.name)}));
       const description = (this._destinations.find((item) => item.name === destinationPoint)).description;
       const entry = {
         type,
@@ -200,11 +202,6 @@ class TripController {
       const destinationOffers = (this._offers.find((item) => item.type === newData.type)).offers;
       newData.description = destinationData.description;
       newData.pics = destinationData.pictures.map((item) => item.src);
-      newData.offers = destinationOffers.map((item)=> ({
-        name: item.title,
-        cost: item.price,
-        isEnabled: false,
-      }));
       newData.id = this._events[this._events.length - 1].id + 1;
       this._events.push(newData);
     }
