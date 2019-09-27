@@ -13,14 +13,12 @@ import Chart from 'chart.js';
 class MainController {
   constructor(events, destinations, offers) {
     this._events = events;
-    this._destinations = destinations;
-    this._offers = offers;
     this._sort = new Sort();
     this._filter = new Filter();
     this._tripInfo = new TripInfo(events);
     this._statistics = new Statistics(events);
     this._onDataChangeInTripController = this._onDataChangeInTripController.bind(this);
-    this._tripController = new TripController(this._renderTripDaysContainer(), events, this._onDataChangeInTripController);
+    this._tripController = new TripController(this._renderTripDaysContainer(), events, destinations, offers, this._onDataChangeInTripController);
   }
 
   // начальная инициализация
@@ -29,7 +27,7 @@ class MainController {
     this._statistics.hide();
     this._renderTripInfo();
     this._renderFilter();
-    this._tripController.init(this._offers, this._destinations);
+    this._tripController.init();
   }
 
   // подготовка контейнера для событий

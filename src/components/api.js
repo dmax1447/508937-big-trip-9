@@ -1,4 +1,5 @@
 import ModelEvent from './model-event.js';
+import ModelOffer from './model-offer';
 
 const Method = {
   GET: `GET`,
@@ -49,7 +50,8 @@ const API = class {
 
   getOffers() {
     return this._load({url: `offers`})
-      .then(toJSON);
+      .then(toJSON)
+      .then(ModelOffer.parseOffers);
   }
 
   createTask({task}) {

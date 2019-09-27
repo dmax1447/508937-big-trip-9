@@ -4,84 +4,90 @@ import Day from './day.js';
 import Sort from './sort.js';
 import PointController from './point-controller';
 import TripEventFormNew from './trip-event-form-new';
-import {Position, EVENT_FORM_DATE_FORMAT} from './constants.js';
-import {render, unrender} from './utils.js';
+import { Position, EVENT_FORM_DATE_FORMAT, EVENT_TO_TEXT_MAP} from './constants.js';
+import {render, unrender, createElement} from './utils.js';
 import moment from 'moment';
 import flatpickr from 'flatpickr';
+import Offers from './offers';
 
 class TripController {
-  constructor(container, events, onDataChangeMain) {
+  constructor(container, events, destinations, offers, onDataChangeMain) {
     this.onDataChangeMain = onDataChangeMain;
     this._container = container;
     this._events = events;
+    this._destinations = destinations;
+    this._offers = offers;
     this._eventsSorted = [];
     this._sort = new Sort();
     this._tripDayElements = [];
     this._onDataChange = this._onDataChange.bind(this);
     this._onChangeView = this._onChangeView.bind(this);
-    this._tripEventFormNew = new TripEventFormNew();
+    this._tripEventFormNew = new TripEventFormNew(this._destinations, this._offers);
     this._subscriptions = [];
+    this._offersComponent = new Offers(offers);
   }
 
   // начальная инициализация
-  init(destinations, offers) {
+  init() {
     this._renderSort();
     this._renderTripEventNewForm();
-    this.renderDays(this._events, true, destinations, offers);
+    this.renderDays(this._events, true);
   }
 
   // рендер формы нового события
   _renderTripEventNewForm() {
-    const element = this._tripEventFormNew.getElement();
-    render(this._container, element, Position.BEFOREEND);
-    document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
+    const formElement = this._tripEventFormNew.getElement();
+    const destinationInput = formElement.querySelector(`.event__input--destination`);
+    const typeBtns = [...formElement.querySelectorAll(`.event__type-input`)];
+    const submitBtn = document.querySelector(`.trip-main__event-add-btn`);
+
+    // обработчик выбора типа
+    const onTypeChange = (evt) => {
+      const eventType = evt.target.value;
+      if (this._offersComponent._element) {
+        unrender(this._offersComponent);
+      }
+      formElement.querySelector(`.event__type-output`).innerText = EVENT_TO_TEXT_MAP.get(eventType);
+      render(formElement, this._offersComponent.getElement(eventType), Position.BEFOREEND);
+    };
+    typeBtns.forEach((btn) => btn.addEventListener(`click`, onTypeChange));
+
+    // обработчик выбора места назначения
+    const onDestinationChange = (evt) => {
+      console.log(evt.target.value);
+    };
+    destinationInput.addEventListener(`change`, onDestinationChange);
+
+    submitBtn.addEventListener(`click`, () => {
       this._onChangeView();
       this._tripEventFormNew.show();
     });
 
     const onFormSubmit = (evt) => {
       evt.preventDefault();
-      const data = new FormData(element);
+      const formData = new FormData(formElement);
+      const type = formData.get(`event-type`);
+      const availbleOffers = (this._offers.find((item) => item.type === type)).offers;
+      const offersChecked = formData.getAll(`event-offer`);
+      const destinationPoint = formData.get(`event-destination`);
+      const offers = null;
+      const description = (this._destinations.find((item) => item.name === destinationPoint)).description;
       const entry = {
-        type: data.get(`event-type`),
-        destinationPoint: data.get(`event-destination`),
-        description: data.get(``),
-        startDate: moment(data.get(`event-start-time`), `DD-MM-YY kk-mm`),
-        endDate: moment(data.get(`event-end-time`), `DD-MM-YY kk-mm`),
-        cost: parseInt(data.get(`event-price`), 10),
-        offers: data.getAll(`event-offer`).reduce((acc, offerName) => {
-          const offer = acc.find((item) => item.name === offerName);
-          offer.isEnabled = true;
-          return acc;
-        }, [
-          {
-            name: `Add luggage`,
-            cost: 10,
-            isEnabled: false,
-          },
-          {
-            name: `Switch to comfort`,
-            cost: 150,
-            isEnabled: false,
-          },
-          {
-            name: `Add meal`,
-            cost: 2,
-            isEnabled: false,
-          },
-          {
-            name: `Choose seats`,
-            cost: 9,
-            isEnabled: false,
-          },
-        ]),
-        isFavorite: data.get(`event-favorite`),
+        type,
+        destinationPoint,
+        description,
+        startDate: moment(formData.get(`event-start-time`), `DD-MM-YY kk-mm`),
+        endDate: moment(formData.get(`event-end-time`), `DD-MM-YY kk-mm`),
+        cost: parseInt(formData.get(`event-price`), 10),
+        offers,
+        isFavorite: formData.get(`event-favorite`),
         id: null,
       };
       this._onDataChange(entry, null);
     };
-    flatpickr(element.querySelectorAll(`.event__input--time`), EVENT_FORM_DATE_FORMAT);
-    element.addEventListener(`submit`, onFormSubmit);
+    flatpickr(formElement.querySelectorAll(`.event__input--time`), EVENT_FORM_DATE_FORMAT);
+    formElement.addEventListener(`submit`, onFormSubmit);
+    render(this._container, formElement, Position.BEFOREEND);
   }
 
   // рендер сортировки: подвешивание обработчиков
@@ -92,7 +98,7 @@ class TripController {
     render(this._container, this._sort.getElement(), Position.AFTERBEGIN);
     const sortInputs = [...this._sort._element.querySelectorAll(`.trip-sort__input`)];
     const onSortFieldClick = (evt) => {
-      const sortBy = evt.target.dataset.sortId;
+      const sortBy = evt.target.formDataset.sortId;
       this._sort._items.forEach((item) => {
         item.isEnabled = (item.name === sortBy);
       });
@@ -117,8 +123,6 @@ class TripController {
 
   // рендерит разметку дней, сортировку, события в дни
   renderDays(events, isDayShow, offers, destinations) {
-    console.log(destinations);
-    console.log(offers);
     this._unrenderDays();
     if (this._events.length > 0) {
       this._tripEventFormNew.hide();
@@ -138,7 +142,7 @@ class TripController {
   _renderDayEvents(container, events) {
     const eventSlots = [...container.querySelectorAll(`.trip-events__item`)];
     eventSlots.forEach((slot, i) => {
-      const pointController = new PointController(slot, events[i], this._onDataChange, this._onChangeView);
+      const pointController = new PointController(slot, events[i], this._onDataChange, this._onChangeView, this._destinations, this._offers);
       this._subscriptions.push(pointController.setDefaultView);
       pointController.render();
     });
@@ -192,14 +196,15 @@ class TripController {
     }
 
     if (oldData === null) {
-      newData.pics = [
-        `http://picsum.photos/300/150?r=${Math.random()}`,
-        `http://picsum.photos/300/150?r=${Math.random()}`,
-        `http://picsum.photos/300/150?r=${Math.random()}`,
-        `http://picsum.photos/300/150?r=${Math.random()}`,
-        `http://picsum.photos/300/150?r=${Math.random()}`,
-      ];
-
+      const destinationData = this._destinations.find((item) => (item.name === newData.destinationPoint));
+      const destinationOffers = (this._offers.find((item) => item.type === newData.type)).offers;
+      newData.description = destinationData.description;
+      newData.pics = destinationData.pictures.map((item) => item.src);
+      newData.offers = destinationOffers.map((item)=> ({
+        name: item.title,
+        cost: item.price,
+        isEnabled: false,
+      }));
       newData.id = this._events[this._events.length - 1].id + 1;
       this._events.push(newData);
     }

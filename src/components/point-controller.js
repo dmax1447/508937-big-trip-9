@@ -6,14 +6,13 @@ import flatpickr from 'flatpickr';
 import moment from 'moment';
 
 class PointController {
-  constructor(container, event, onDataChange, onChangeView) {
+  constructor(container, event, onDataChange, onChangeView, destinations, offers) {
     this._container = container;
     this._event = event;
-
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
     this._eventElement = new TripEvent(event).getElement();
-    this._eventFormElement = new TripEventForm(event).getElement();
+    this._eventFormElement = new TripEventForm(event, destinations, offers).getElement();
     this.setDefaultView = this.setDefaultView.bind(this);
   }
 
@@ -41,43 +40,26 @@ class PointController {
       evt.preventDefault();
       this._container.replaceChild(this._eventElement, this._eventFormElement);
       document.removeEventListener(`keydown`, onEscKeyDown);
-      const data = new FormData(this._eventFormElement);
+      const formData = new FormData(this._eventFormElement);
+      for (let pair of formData.entries()) {
+        console.log(`${pair[0]} : ${pair[1]}`);
+      }
+      const offersEnabled = formData.getAll(`event-offer`);
+      this._event.offers.forEach((item) => {
+        item.isEnabled = offersEnabled.includes(item.name);
+      });
       const entry = {
-        type: data.get(`event-type`),
-        destinationPoint: data.get(`event-destination`),
-        description: data.get(``),
-        startDate: moment(data.get(`event-start-time`), `DD-MM-YY kk-mm`),
-        endDate: moment(data.get(`event-end-time`), `DD-MM-YY kk-mm`),
-        cost: parseInt(data.get(`event-price`), 10),
-        offers: data.getAll(`event-offer`).reduce((acc, offerName) => {
-          const offer = acc.find((item) => item.name === offerName);
-          offer.isEnabled = true;
-          return acc;
-        }, [
-          {
-            name: `Add luggage`,
-            cost: 10,
-            isEnabled: false,
-          },
-          {
-            name: `Switch to comfort`,
-            cost: 150,
-            isEnabled: false,
-          },
-          {
-            name: `Add meal`,
-            cost: 2,
-            isEnabled: false,
-          },
-          {
-            name: `Choose seats`,
-            cost: 9,
-            isEnabled: false,
-          },
-        ]),
-        isFavorite: data.get(`event-favorite`),
+        type: formData.get(`event-type`),
+        destinationPoint: formData.get(`event-destination`),
+        description: formData.get(``),
+        startDate: moment(formData.get(`event-start-time`), `DD-MM-YY kk-mm`),
+        endDate: moment(formData.get(`event-end-time`), `DD-MM-YY kk-mm`),
+        cost: parseInt(formData.get(`event-price`), 10),
+        offers: this._event.offers,
+        isFavorite: formData.get(`event-favorite`),
         id: this._event.id,
       };
+      console.log(entry);
       this._onDataChange(entry, this._event);
     };
 
@@ -91,8 +73,6 @@ class PointController {
 
     // клик по удалить
     const onBtnDeleteClick = () => {
-      // this._container.replaceChild(this._eventElement, this._eventFormElement);
-      // console.log(`delete`);
       this._onDataChange(null, this._event);
 
     };

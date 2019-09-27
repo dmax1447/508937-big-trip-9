@@ -31,6 +31,8 @@ const init = async () => {
   const events = await api.getEvents();
   const destinations = await api.getDestinations();
   const offers = await api.getOffers();
+  console.dir(events);
+  console.dir(offers);
   const mainController = new MainController(events, destinations, offers);
   mainController.init();
 };
