@@ -24,12 +24,16 @@ const API = class {
   constructor({endPoint, authorization}) {
     this._endPoint = endPoint;
     this._authorization = authorization;
+    this._headers = {
+      'Authorization': authorization,
+      'Content-Type': 'application/json',
+    };
   }
 
-  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
-    headers.append(`Authorization`, this._authorization);
-
-    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
+  _load({url, method = Method.GET, body = null, headers = this._headers}) {
+    // headers.append(`Authorization`, this._authorization);
+    // headers.append(`Content-Type`, `application / json`);
+    return fetch(`${this._endPoint}${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {
         console.error(`fetch error: ${err}`);
@@ -54,25 +58,26 @@ const API = class {
       .then(ModelOffer.parseOffers);
   }
 
-  createTask({task}) {
+  // createEvent({event}) {
+  // }
+
+  updateEvent(data) {
+    return this._load({
+      url: `points/${data.id}`,
+      method: Method.PUT,
+      body: JSON.stringify(data.toRAW()),
+    });
   }
 
-  updateTask({id, data}) {
+  deleteEvent({id}) {
+
+    return this._load({
+      url: `points/${id}`,
+      method: Method.DELETE,
+    });
   }
 
-  deleteTask({id}) {
-  }
 
-  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
-    headers.append(`Authorization`, this._authorization);
-
-    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-      .then(checkStatus)
-      .catch((err) => {
-        console.error(`fetch error: ${err}`);
-        throw err;
-      });
-  }
 };
 
 export default API;

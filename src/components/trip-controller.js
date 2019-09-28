@@ -5,14 +5,14 @@ import Sort from './sort.js';
 import PointController from './point-controller';
 import TripEventFormNew from './trip-event-form-new';
 import { Position, EVENT_FORM_DATE_FORMAT, EVENT_TO_TEXT_MAP} from './constants.js';
-import {render, unrender, createElement} from './utils.js';
+import {render, unrender} from './utils.js';
 import moment from 'moment';
 import flatpickr from 'flatpickr';
 import Offers from './offers';
 
 class TripController {
-  constructor(container, events, destinations, offers, onDataChangeMain) {
-    this.onDataChangeMain = onDataChangeMain;
+  constructor(container, events, destinations, offers, onDataChangeInTripController) {
+    this.onDataChangeInTripController = onDataChangeInTripController;
     this._container = container;
     this._events = events;
     this._destinations = destinations;
@@ -31,7 +31,7 @@ class TripController {
   init() {
     this._renderSort();
     this._renderTripEventNewForm();
-    this.renderDays(this._events, true);
+    this.renderDays(true);
   }
 
   // рендер формы нового события
@@ -131,14 +131,14 @@ class TripController {
   }
 
   // рендерит разметку дней, сортировку, события в дни
-  renderDays(events, isDayShow, offers, destinations) {
+  renderDays(isDayShow) {
     this._unrenderDays();
     if (this._events.length > 0) {
       this._tripEventFormNew.hide();
     }
-    const days = this._getEventDays(events);
+    const days = this._getEventDays(this._events);
     days.forEach((day, i) => {
-      const dayEvents = events.filter((event) => moment(event.startDate).format(`YYYY-MM-DD`) === day);
+      const dayEvents = this._events.filter((event) => moment(event.startDate).format(`YYYY-MM-DD`) === day);
       const tripDay = new Day(dayEvents.length, i + 1, day, isDayShow);
       this._tripDayElements.push(tripDay);
       render(this._container, tripDay.getElement(), Position.BEFOREEND);
@@ -179,16 +179,21 @@ class TripController {
     };
 
     if (sortBy === `event`) {
-      this.renderDays(this._events, true);
+      this.renderDays(true);
     } else {
       this._eventsSorted = JSON.parse(JSON.stringify(this._events));
       this._eventsSorted.sort((a, b) => compareEvents(a, b, sortBy));
-      this.renderDays(this._eventsSorted, false);
+      this.renderDays(false);
     }
   }
 
   // обработка изменений данных
   _onDataChange(newData, oldData) {
+    const commit = {
+      type: null,
+      data: null
+    };
+
     if (newData !== null && oldData !== null) {
       const event = this._events.find((item) => item.id === oldData.id);
       event.type = newData.type;
@@ -198,19 +203,23 @@ class TripController {
       event.cost = newData.cost;
       event.offers = newData.offers;
       event.isFavorite = newData.isFavorite;
+      commit.type = `update`
+      commit.data = event;
     }
 
     if (newData === null) {
       const eventIndex = this._events.findIndex((item) => item.id === oldData.id);
-      this._events.splice(eventIndex, 1);
+      const deletedEvent = this._events.splice(eventIndex, 1);
+      commit.type = `delete`
+      commit.data = deletedEvent[0];
     }
 
     if (oldData === null) {
-      newData.id = this._events[this._events.length - 1].id + 1;
       this._events.push(newData);
+      commit.type = `create`
+      commit.data = newData;
     }
-    this.onDataChangeMain(this._events);
-    this.renderDays(this._events, this._sort._items[0].isEnabled);
+    this.onDataChangeInTripController(commit);
   }
 
   // коллбек на открытие формы редактирования (закрывает остальные формы)

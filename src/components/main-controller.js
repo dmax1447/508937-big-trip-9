@@ -273,11 +273,37 @@ class MainController {
   }
 
   // обработка изменений данных
-  _onDataChangeInTripController(data) {
-    // оставил с прицелом на иммутабельность данных
-    // this._events = data;
+  _onDataChangeInTripController(commit) {
+    switch (commit.type) {
+      case `create`:
+
+        break;
+      case `update`:
+        this.api.updateEvent(commit.data)
+          .then(() => {
+            this.update();
+          });
+        break;
+      case `delete`:
+        this.api.deleteEvent(commit.data)
+          .then(() => {
+            this.update();
+          });
+        break;
+
+      default:
+        break;
+    }
     this._renderTripInfo();
     this._renderStat();
+  }
+
+  update() {
+    this.api.getEvents()
+      .then((events) => {
+        this._tripController._events = events;
+        this._tripController.renderDays(true);
+      });
   }
 }
 

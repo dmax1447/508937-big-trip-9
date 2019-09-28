@@ -155,7 +155,7 @@ class TripEventForm extends AbstractComponent {
 
             <div class="event__photos-container">
               <div class="event__photos-tape">
-                ${this._pics.map((item) => `<img class="event__photo" src="${item}" alt="Event photo">`).join(``).trim()}
+                ${this._pics.map((item) => `<img class="event__photo" src="${item.src}" alt="${item.description}">`).join(``).trim()}
               </div>
             </div>
           </section>

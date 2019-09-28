@@ -40,7 +40,9 @@ class PointController {
       evt.preventDefault();
       this._container.replaceChild(this._eventElement, this._eventFormElement);
       document.removeEventListener(`keydown`, onEscKeyDown);
+
       const formData = new FormData(this._eventFormElement);
+      // отладка, вывод всех ключей формы
       for (let pair of formData.entries()) {
         console.log(`${pair[0]} : ${pair[1]}`);
       }
@@ -56,10 +58,17 @@ class PointController {
         endDate: moment(formData.get(`event-end-time`), `DD-MM-YY kk-mm`),
         cost: parseInt(formData.get(`event-price`), 10),
         offers: this._event.offers,
-        isFavorite: formData.get(`event-favorite`),
+        isFavorite: Boolean(formData.get(`event-favorite`)),
         id: this._event.id,
       };
-      console.log(entry);
+      // this._event.type = formData.get(`event-type`);
+      // this._event.destinationPoint = formData.get(`event-destination`);
+      // this._event.description = formData.get(``);
+      // this._event.startDate = moment(formData.get(`event-start-time`), `DD-MM-YY kk-mm`);
+      // this._event.endDate = moment(formData.get(`event-end-time`), `DD-MM-YY kk-mm`);
+      // this._event.cost = parseInt(formData.get(`event-price`), 10);
+      // this._event.isFavorite = Boolean(formData.get(`event-favorite`));
+
       this._onDataChange(entry, this._event);
     };
 
