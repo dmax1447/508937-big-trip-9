@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import Day from './day.js';
 import Sort from './sort.js';
 import PointController from './point-controller';
