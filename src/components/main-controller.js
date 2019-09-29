@@ -83,7 +83,6 @@ class MainController {
   _onDataChangeInTripController(commit) {
     switch (commit.type) {
       case `create`:
-
         break;
       case `update`:
         this.api.updateEvent(commit.data)

@@ -26,7 +26,7 @@ const API = class {
     this._authorization = authorization;
     this._headers = {
       'Authorization': authorization,
-      'Content-Type': 'application/json',
+      'Content-Type': `application/json`,
     };
   }
 
@@ -36,6 +36,7 @@ const API = class {
     return fetch(`${this._endPoint}${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {
+        // eslint-disable-next-line no-console
         console.error(`fetch error: ${err}`);
         throw err;
       });

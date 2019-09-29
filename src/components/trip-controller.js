@@ -2,7 +2,7 @@ import Day from './day.js';
 import Sort from './sort.js';
 import PointController from './point-controller';
 import TripEventFormNew from './trip-event-form-new';
-import { Position, EVENT_FORM_DATE_FORMAT, EVENT_TO_TEXT_MAP} from './constants.js';
+import {Position, EVENT_FORM_DATE_FORMAT, EVENT_TO_TEXT_MAP} from './constants.js';
 import {render, unrender} from './utils.js';
 import moment from 'moment';
 import flatpickr from 'flatpickr';
@@ -35,7 +35,6 @@ class TripController {
   // рендер формы нового события
   _renderTripEventNewForm() {
     const formElement = this._tripEventFormNew.getElement();
-    const destinationInput = formElement.querySelector(`.event__input--destination`);
     const typeBtns = [...formElement.querySelectorAll(`.event__type-input`)];
     const addEventBtn = document.querySelector(`.trip-main__event-add-btn`);
     const cancelBtn = formElement.querySelector(`.event__reset-btn`);
@@ -63,18 +62,14 @@ class TripController {
     };
     typeBtns.forEach((btn) => btn.addEventListener(`click`, onTypeChange));
 
-    // обработчик выбора места назначения
-    const onDestinationChange = (evt) => {
-      console.log(evt.target.value);
-    };
-    destinationInput.addEventListener(`change`, onDestinationChange);
-
     // обработчик сохранения данных нового события
     const onFormSubmit = (evt) => {
       evt.preventDefault();
       const formData = new FormData(formElement);
       const offersChecked = formData.getAll(`event-offer`);
-      const offers = this._offersComponent.offers.map(offer => ({...offer, isEnabled: offersChecked.includes(offer.name)}));
+      // const offers = this._offersComponent.offers.map(offer => ({...offer, isEnabled: offersChecked.includes(offer.name)}));
+      const offers = this._offersComponent.offers.map((offer) => Object.assign({}, offer, {isEnabled: offersChecked.includes(offer.name)}));
+
       const destinationPoint = formData.get(`event-destination`);
       const destinationData = this._destinations.find((item) => (item.name === destinationPoint));
 
@@ -201,20 +196,20 @@ class TripController {
       event.cost = newData.cost;
       event.offers = newData.offers;
       event.isFavorite = newData.isFavorite;
-      commit.type = `update`
+      commit.type = `update`;
       commit.data = event;
     }
 
     if (newData === null) {
       const eventIndex = this._events.findIndex((item) => item.id === oldData.id);
       const deletedEvent = this._events.splice(eventIndex, 1);
-      commit.type = `delete`
+      commit.type = `delete`;
       commit.data = deletedEvent[0];
     }
 
     if (oldData === null) {
       this._events.push(newData);
-      commit.type = `create`
+      commit.type = `create`;
       commit.data = newData;
     }
     this.onDataChangeInTripController(commit);
