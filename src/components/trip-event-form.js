@@ -1,19 +1,21 @@
 import AbstractComponent from './abstract.js';
 import moment from 'moment';
+import {EVENT_TO_TEXT_MAP} from './constants.js';
 
 class TripEventForm extends AbstractComponent {
-  constructor({type, destinationPoint, pics, description, startDate, endDate, cost, offers, isFavorite, placeholder}) {
+  constructor(event, destinations, offers) {
     super();
-    this._type = type;
-    this._destinationPoint = destinationPoint;
-    this._pics = pics;
-    this._description = description;
-    this._startDate = startDate;
-    this._endDate = endDate;
-    this._cost = cost;
-    this._offers = offers;
-    this._isFavorite = isFavorite;
-    this._placeholder = placeholder;
+    this._type = event.type;
+    this._destinationPoint = event.destinationPoint;
+    this._pics = event.pics;
+    this._description = event.description;
+    this._startDate = event.startDate;
+    this._endDate = event.endDate;
+    this._cost = event.cost;
+    this._offers = event.offers;
+    this._isFavorite = event.isFavorite;
+    this._destinations = destinations;
+    this._offersAll = offers;
   }
 
   // вернет шаблон предложения
@@ -34,82 +36,70 @@ class TripEventForm extends AbstractComponent {
     return `
       <form class="event  event--edit" action="#" method="post">
         <header class="event__header">
+
           <div class="event__type-wrapper">
-            <label class="event__type  event__type-btn" for="event-type-toggle-1">
-              <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${this._type}.png" alt="Event type icon">
-            </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
-
-            <div class="event__type-list">
-              <fieldset class="event__type-group">
-                <legend class="visually-hidden">Transfer</legend>
-
-                <div class="event__type-item">
-                  <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${this._type === `taxi` ? `checked` : ``}>
-                  <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${this._type === `bus` ? `checked` : ``}>
-                  <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${this._type === `train` ? `checked` : ``}>
-                  <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${this._type === `ship` ? `checked` : ``}>
-                  <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${this._type === `transport` ? `checked` : ``}>
-                  <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${this._type === `drive` ? `checked` : ``}>
-                  <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${this._type === `flight` ? `checked` : ``}>
-                  <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-                </div>
-              </fieldset>
-
-              <fieldset class="event__type-group">
-                <legend class="visually-hidden">Activity</legend>
-
-                <div class="event__type-item">
-                  <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${this._type === `check-in` ? `checked` : ``}>
-                  <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" ${this._type === `sightseenig` ? `checked` : ``}>
-                  <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${this._type === `restaurant` ? `checked` : ``}>
-                  <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-                </div>
-              </fieldset>
-            </div>
+          <label class="event__type  event__type-btn" for="event-type-toggle-1">
+            <span class="visually-hidden">Choose event type</span>
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${this._type}.png" alt="Event type icon">
+          </label>
+          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+          <div class="event__type-list">
+            <fieldset class="event__type-group">
+              <legend class="visually-hidden">Transfer</legend>
+              <div class="event__type-item">
+                <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${this._type === `taxi` ? `checked` : ``}>
+                <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
+              </div>
+              <div class="event__type-item">
+                <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${this._type === `bus` ? `checked` : ``}>
+                <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
+              </div>
+              <div class="event__type-item">
+                <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${this._type === `train` ? `checked` : ``}>
+                <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
+              </div>
+              <div class="event__type-item">
+                <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${this._type === `ship` ? `checked` : ``}>
+                <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
+              </div>
+              <div class="event__type-item">
+                <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" ${this._type === `transport` ? `checked` : ``}>
+                <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
+              </div>
+              <div class="event__type-item">
+                <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${this._type === `drive` ? `checked` : ``}>
+                <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
+              </div>
+              <div class="event__type-item">
+                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${this._type === `flight` ? `checked` : ``}>
+                <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
+              </div>
+            </fieldset>
+            <fieldset class="event__type-group">
+              <legend class="visually-hidden">Activity</legend>
+              <div class="event__type-item">
+                <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${this._type === `check-in` ? `checked` : ``}>
+                <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
+              </div>
+              <div class="event__type-item">
+                <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" ${this._type === `` ? `checked` : `sightseeing`}>
+                <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
+              </div>
+              <div class="event__type-item">
+                <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${this._isType} ${this._type === `restaurant` ? `checked` : ``}>
+                <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
+              </div>
+            </fieldset>
           </div>
+        </div>
+
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${this._placeholder}
+              ${EVENT_TO_TEXT_MAP.get(this._type)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${this._destinationPoint}" list="destination-list-1">
             <datalist id="destination-list-1">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
+              ${this._destinations.map((item) => `<option value="${item.name}"></option>`).join(``).trim()}
             </datalist>
           </div>
 
@@ -155,7 +145,7 @@ class TripEventForm extends AbstractComponent {
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
             <div class="event__available-offers">
-              ${this._offers.map((offer) => this.getOfferTemplate(offer)).join(``)}
+              ${this._offers.map((offer) => this.getOfferTemplate(offer)).join(``).trim()}
             </div>
           </section>
 
@@ -165,11 +155,7 @@ class TripEventForm extends AbstractComponent {
 
             <div class="event__photos-container">
               <div class="event__photos-tape">
-                <img class="event__photo" src="${this._pics[0]}" alt="Event photo">
-                <img class="event__photo" src="${this._pics[1]}" alt="Event photo">
-                <img class="event__photo" src="${this._pics[2]}" alt="Event photo">
-                <img class="event__photo" src="${this._pics[3]}" alt="Event photo">
-                <img class="event__photo" src="${this._pics[4]}" alt="Event photo">
+                ${this._pics.map((item) => `<img class="event__photo" src="${item.src}" alt="${item.description}">`).join(``).trim()}
               </div>
             </div>
           </section>
