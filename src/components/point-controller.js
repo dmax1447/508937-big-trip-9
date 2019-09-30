@@ -42,11 +42,7 @@ class PointController {
       document.removeEventListener(`keydown`, onEscKeyDown);
 
       const formData = new FormData(this._eventFormElement);
-      // отладка, вывод всех ключей формы
-      for (let pair of formData.entries()) {
-        // eslint-disable-next-line no-console
-        console.log(`${pair[0]} : ${pair[1]}`);
-      }
+
       const offersEnabled = formData.getAll(`event-offer`);
       this._event.offers.forEach((item) => {
         item.isEnabled = offersEnabled.includes(item.name);
