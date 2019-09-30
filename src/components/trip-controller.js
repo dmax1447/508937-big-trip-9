@@ -101,7 +101,7 @@ class TripController {
     render(this._container, this._sort.getElement(), Position.AFTERBEGIN);
     const sortInputs = [...this._sort._element.querySelectorAll(`.trip-sort__input`)];
     const onSortFieldClick = (evt) => {
-      const sortBy = evt.target.formDataset.sortId;
+      const sortBy = evt.target.dataset.sortId;
       this._sort._items.forEach((item) => {
         item.isEnabled = (item.name === sortBy);
       });
@@ -124,21 +124,27 @@ class TripController {
     return [...new Set(eventsDays)].sort();
   }
 
-  // рендерит разметку дней, сортировку, события в дни
+  // рендерит разметку дней, события в дни
   renderDays(isDayShow) {
     this._unrenderDays();
     if (this._events.length > 0) {
       this._tripEventFormNew.hide();
     }
-    const days = this._getEventDays(this._events);
-    days.forEach((day, i) => {
-      const dayEvents = this._events.filter((event) => moment(event.startDate).format(`YYYY-MM-DD`) === day);
-      const tripDay = new Day(dayEvents.length, i + 1, day, isDayShow);
+    if (isDayShow) {
+      const days = this._getEventDays(this._events);
+      days.forEach((day, i) => {
+        const dayEvents = this._events.filter((event) => moment(event.startDate).format(`YYYY-MM-DD`) === day);
+        const tripDay = new Day(dayEvents.length, i + 1, day, isDayShow);
+        this._tripDayElements.push(tripDay);
+        render(this._container, tripDay.getElement(), Position.BEFOREEND);
+        this._renderDayEvents(tripDay._element, dayEvents);
+      });
+    } else {
+      const tripDay = new Day(this._events.length, 0, null, isDayShow);
       this._tripDayElements.push(tripDay);
       render(this._container, tripDay.getElement(), Position.BEFOREEND);
-      this._renderDayEvents(tripDay._element, dayEvents);
-    });
-
+      this._renderDayEvents(tripDay._element, this._eventsSorted);
+    }
   }
 
   // рендерит в контейнер "день" события дня
