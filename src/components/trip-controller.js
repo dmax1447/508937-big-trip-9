@@ -4,17 +4,18 @@ import PointController from './point-controller';
 import TripEventFormNew from './trip-event-form-new';
 import {Position, EVENT_FORM_DATE_FORMAT, EVENT_TO_TEXT_MAP} from './constants.js';
 import {render, unrender} from './utils.js';
+import ModelEventLocal from './model-event-local';
 import moment from 'moment';
 import flatpickr from 'flatpickr';
 import Offers from './offers';
 
 class TripController {
-  constructor(container, events, destinations, offers, onDataChangeInTripController) {
+  constructor(container, data, onDataChangeInTripController) {
     this.onDataChangeInTripController = onDataChangeInTripController;
     this._container = container;
-    this._events = events;
-    this._destinations = destinations;
-    this._offers = offers;
+    this._events = data.events;
+    this._destinations = data.destinations;
+    this._offers = data.offers;
     this._eventsSorted = [];
     this._sort = new Sort();
     this._tripDayElements = [];
@@ -77,7 +78,7 @@ class TripController {
         type: formData.get(`event-type`),
         destinationPoint,
         description: destinationData.description,
-        pics: destinationData.pictures.map((item) => item.src),
+        pics: destinationData.pictures,
         startDate: moment(formData.get(`event-start-time`), `DD-MM-YY kk-mm`),
         endDate: moment(formData.get(`event-end-time`), `DD-MM-YY kk-mm`),
         cost: parseInt(formData.get(`event-price`), 10),
@@ -208,9 +209,8 @@ class TripController {
     }
 
     if (oldData === null) {
-      this._events.push(newData);
       commit.type = `create`;
-      commit.data = newData;
+      commit.data = new ModelEventLocal(newData);
     }
     this.onDataChangeInTripController(commit);
   }
