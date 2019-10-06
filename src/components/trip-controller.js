@@ -42,17 +42,8 @@ class TripController {
     const formElement = this._tripEventFormNew.getElement();
     render(this._container, formElement, Position.AFTERBEGIN);
 
-    const typeBtns = [...formElement.querySelectorAll(`.event__type-input`)];
-    // const addEventBtn = document.querySelector(`.trip-main__event-add-btn`);
-    const cancelBtn = formElement.querySelector(`.event__reset-btn`);
-
-    // // показ формы нового события по кнпке добавить новое
-    // addEventBtn.addEventListener(`click`, () => {
-    //   this._onChangeView();
-    //   this._tripEventFormNew.show();
-    // });
-
     // скрытие формы нового события по кнопке cancel нового события
+    const cancelBtn = formElement.querySelector(`.event__reset-btn`);
     cancelBtn.addEventListener(`click`, () => {
       unrender(this._tripEventFormNew);
     });
@@ -67,6 +58,7 @@ class TripController {
       this._offersComponent.offers = (this._offers.find((item) => item.type === eventType)).offers;
       render(formElement, this._offersComponent.getElement(), Position.BEFOREEND);
     };
+    const typeBtns = [...formElement.querySelectorAll(`.event__type-input`)];
     typeBtns.forEach((btn) => btn.addEventListener(`click`, onTypeChange));
 
     // обработчик сохранения данных нового события
