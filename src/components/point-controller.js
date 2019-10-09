@@ -82,13 +82,15 @@ class PointController {
       this._event.offers.forEach((item) => {
         item.isEnabled = offersEnabled.includes(item.name);
       });
+      const destinationPoint = /[a-z]/ig.exec(formData.get(`event-destination`)).join(``);
+      const costValue = /\d+/.exec(formData.get(`event-price`)).join(``);
       const entry = {
         type: formData.get(`event-type`),
-        destinationPoint: formData.get(`event-destination`),
+        destinationPoint,
         description: formData.get(``),
         startDate: moment(formData.get(`event-start-time`), `DD-MM-YY kk-mm`),
         endDate: moment(formData.get(`event-end-time`), `DD-MM-YY kk-mm`),
-        cost: parseInt(formData.get(`event-price`), 10),
+        cost: parseInt(costValue, 10),
         offers: this._event.offers,
         isFavorite: Boolean(formData.get(`event-favorite`)),
         id: this._event.id,

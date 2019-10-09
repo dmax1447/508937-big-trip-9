@@ -70,7 +70,8 @@ class TripController {
       const formData = new FormData(formElement);
       const offersChecked = formData.getAll(`event-offer`);
       const offers = this._offersComponent.offers.map((offer) => Object.assign({}, offer, {isEnabled: offersChecked.includes(offer.name)}));
-      const destinationPoint = formData.get(`event-destination`);
+      const destinationPoint = /[a-z]/ig.exec(formData.get(`event-destination`)).join(``);
+      const cost = /\d+/.exec(formData.get(`event-price`)).join(``);
       const destinationData = this._destinations.find((item) => (item.name === destinationPoint));
 
       const entry = {
@@ -80,7 +81,7 @@ class TripController {
         pics: destinationData.pictures,
         startDate: moment(formData.get(`event-start-time`), `DD-MM-YY kk-mm`),
         endDate: moment(formData.get(`event-end-time`), `DD-MM-YY kk-mm`),
-        cost: parseInt(formData.get(`event-price`), 10),
+        cost: parseInt(cost, 10),
         offers,
         isFavorite: formData.get(`event-favorite`),
         id: null,

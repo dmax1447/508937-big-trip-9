@@ -1,6 +1,5 @@
 import AbstractComponent from './abstract.js';
 import Chart from 'chart.js';
-// import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {render, unrender} from './utils.js';
 import {MILISECONDS_PER_HOUR, Position} from './constants.js';
 
