@@ -91,7 +91,7 @@ class Statistics extends AbstractComponent {
       }
     });
 
-    new Chart(moneyCtx, {
+    const moneyChart = new Chart(moneyCtx, {
       type: `horizontalBar`,
       data: {
         labels: [...Object.keys(moneyStat)],
@@ -126,7 +126,7 @@ class Statistics extends AbstractComponent {
       },
     });
 
-    new Chart(transportCtx, {
+    const transportChart = new Chart(transportCtx, {
       type: `horizontalBar`,
       data: {
         labels: [...Object.keys(transportStat)],
@@ -158,7 +158,7 @@ class Statistics extends AbstractComponent {
       },
     });
 
-    new Chart(timeSpendCtx, {
+    const timeChart = new Chart(timeSpendCtx, {
       type: `horizontalBar`,
       data: {
         labels: [...Object.keys(timeStat)],
