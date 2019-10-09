@@ -190,7 +190,7 @@ class Statistics extends AbstractComponent {
       },
     });
 
-
+    return {moneyChart, transportChart, timeChart};
   }
 }
 
