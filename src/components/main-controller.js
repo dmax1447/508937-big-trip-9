@@ -81,23 +81,56 @@ class MainController {
 
   // обработка изменений данных
   _onDataChangeInTripController(commit) {
+    const saveBtn = document.querySelector(`.event__save-btn`);
+    const deleteBtn = document.querySelector(`.event__reset-btn`);
+    const form = document.querySelector(`.event--edit`);
+
     switch (commit.type) {
       case `create`:
         this.api.createEvent(commit.data)
           .then(() => {
+            form.remove();
             this.update();
+          })
+          .catch(() => {
+            form.classList.add(`shake`);
+            saveBtn.removeAttribute(`disabled`);
+            saveBtn.innerText = `save`;
+            form.style.boxShadow = `0 0 10px red`;
+            form.addEventListener(`click`, () => {
+              form.style.boxShadow = `0 0 0 transparent`;
+            });
           });
         break;
       case `update`:
         this.api.updateEvent(commit.data)
           .then(() => {
             this.update();
+          })
+          .catch(() => {
+            form.classList.add(`shake`);
+            saveBtn.removeAttribute(`disabled`);
+            deleteBtn.removeAttribute(`disabled`);
+            saveBtn.innerText = `save`;
+            form.style.boxShadow = `0 0 10px red`;
+            form.addEventListener(`click`, () => {
+              form.style.boxShadow = `0 0 0 transparent`;
+            });
           });
         break;
       case `delete`:
         this.api.deleteEvent(commit.data)
           .then(() => {
             this.update();
+          })
+          .catch(() => {
+            form.classList.add(`shake`);
+            deleteBtn.removeAttribute(`disabled`);
+            deleteBtn.innerText = `delete`;
+            form.style.boxShadow = `0 0 10px red`;
+            form.addEventListener(`click`, () => {
+              form.style.boxShadow = `0 0 0 transparent`;
+            });
           });
         break;
 

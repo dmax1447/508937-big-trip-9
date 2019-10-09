@@ -41,6 +41,7 @@ class TripController {
   _renderTripEventNewForm() {
     const formElement = this._tripEventFormNew.getElement();
     render(this._container, formElement, Position.AFTERBEGIN);
+    const saveBtn = formElement.querySelector(`.event__save-btn`);
 
     // скрытие формы нового события по кнопке cancel нового события
     const cancelBtn = formElement.querySelector(`.event__reset-btn`);
@@ -64,6 +65,8 @@ class TripController {
     // обработчик сохранения данных нового события
     const onFormSubmit = (evt) => {
       evt.preventDefault();
+      saveBtn.setAttribute(`disabled`, true);
+      saveBtn.innerText = `saving`;
       const formData = new FormData(formElement);
       const offersChecked = formData.getAll(`event-offer`);
       const offers = this._offersComponent.offers.map((offer) => Object.assign({}, offer, {isEnabled: offersChecked.includes(offer.name)}));
@@ -83,7 +86,6 @@ class TripController {
         id: null,
       };
       this._onDataChange(entry, null);
-      unrender(this._tripEventFormNew);
     };
 
     flatpickr(formElement.querySelectorAll(`.event__input--time`), EVENT_FORM_DATE_FORMAT);

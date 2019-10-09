@@ -97,7 +97,6 @@ class PointController {
       saveBtn.setAttribute(`disabled`, true);
       deleteBtn.setAttribute(`disabled`, true);
       saveBtn.innerText = `saving`;
-      // this._container.replaceChild(this._eventElement, this._eventFormElement);
       this._onDataChange(entry, this._event);
     };
     this._eventFormElement.addEventListener(`submit`, onFormSubmit);
@@ -113,6 +112,8 @@ class PointController {
     // клик по удалить
     const onBtnDeleteClick = () => {
       this._onDataChange(null, this._event);
+      deleteBtn.setAttribute(`disabled`, true);
+      deleteBtn.innerText = `deleting`;
     };
     deleteBtn.addEventListener(`click`, onBtnDeleteClick);
 
