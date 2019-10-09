@@ -34,8 +34,6 @@ const API = class {
     return fetch(`${this._endPoint}${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error(`fetch error: ${err}`);
         throw err;
       });
   }
