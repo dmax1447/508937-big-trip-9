@@ -18,10 +18,10 @@ class MainController {
     this._offers = offers;
     this._sortComponent = new Sort();
     this._filterComponent = new Filter();
-    this._tripInfo = new TripInfo(this._events);
+    this._tripInfoComponent = new TripInfo(this._events);
     this._statisticsComponent = new Statistics(this._events);
     this._onDataChangeInTripController = this._onDataChangeInTripController.bind(this);
-    this._tripController = new TripController(this._renderTripDaysContainer(), events, destinations, offers, this._onDataChangeInTripController);
+    this._tripController = new TripController(this._renderTripDaysContainer(), {events, destinations, offers}, this._onDataChangeInTripController);
   }
 
   // начальная инициализация
@@ -70,30 +70,67 @@ class MainController {
 
   // рендер информации о поездке
   _renderTripInfo() {
-    if (this._tripInfo._element) {
-      unrender(this._tripInfo);
+    if (this._tripInfoComponent._element) {
+      unrender(this._tripInfoComponent);
     }
-    this._tripInfo = new TripInfo(this._events);
+    this._tripInfoComponent = new TripInfo(this._events);
     const tripInfoContainer = document.querySelector(`.trip-main__trip-info`);
-    render(tripInfoContainer, this._tripInfo.getElement(), Position.AFTERBEGIN);
-    document.querySelector(`.trip-info__cost-value`).textContent = this._tripInfo._totalCost;
+    render(tripInfoContainer, this._tripInfoComponent.getElement(), Position.AFTERBEGIN);
+    document.querySelector(`.trip-info__cost-value`).textContent = this._tripInfoComponent._totalCost;
   }
 
   // обработка изменений данных
   _onDataChangeInTripController(commit) {
+    const saveBtn = document.querySelector(`.event__save-btn`);
+    const deleteBtn = document.querySelector(`.event__reset-btn`);
+    const form = document.querySelector(`.event--edit`);
+
     switch (commit.type) {
       case `create`:
+        this.api.createEvent(commit.data)
+          .then(() => {
+            form.remove();
+            this.update();
+          })
+          .catch(() => {
+            form.classList.add(`shake`);
+            saveBtn.removeAttribute(`disabled`);
+            saveBtn.innerText = `save`;
+            form.style.boxShadow = `0 0 10px red`;
+            form.addEventListener(`click`, () => {
+              form.style.boxShadow = `0 0 0 transparent`;
+            });
+          });
         break;
       case `update`:
         this.api.updateEvent(commit.data)
           .then(() => {
             this.update();
+          })
+          .catch(() => {
+            form.classList.add(`shake`);
+            saveBtn.removeAttribute(`disabled`);
+            deleteBtn.removeAttribute(`disabled`);
+            saveBtn.innerText = `save`;
+            form.style.boxShadow = `0 0 10px red`;
+            form.addEventListener(`click`, () => {
+              form.style.boxShadow = `0 0 0 transparent`;
+            });
           });
         break;
       case `delete`:
         this.api.deleteEvent(commit.data)
           .then(() => {
             this.update();
+          })
+          .catch(() => {
+            form.classList.add(`shake`);
+            deleteBtn.removeAttribute(`disabled`);
+            deleteBtn.innerText = `delete`;
+            form.style.boxShadow = `0 0 10px red`;
+            form.addEventListener(`click`, () => {
+              form.style.boxShadow = `0 0 0 transparent`;
+            });
           });
         break;
 
@@ -102,10 +139,17 @@ class MainController {
     }
   }
 
+  updateEvents(data) {
+    this._events = data;
+    this._tripController._events = data;
+    this._tripInfoComponent._events = data;
+    this._statisticsComponent._events = data;
+  }
+
   update() {
     this.api.getEvents()
       .then((events) => {
-        this._events = events;
+        this.updateEvents(events);
         this._tripController.renderDays(true);
         this._statisticsComponent.render();
         this._renderTripInfo();

@@ -31,8 +31,6 @@ const API = class {
   }
 
   _load({url, method = Method.GET, body = null, headers = this._headers}) {
-    // headers.append(`Authorization`, this._authorization);
-    // headers.append(`Content-Type`, `application / json`);
     return fetch(`${this._endPoint}${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {
@@ -59,8 +57,13 @@ const API = class {
       .then(ModelOffer.parseOffers);
   }
 
-  // createEvent({event}) {
-  // }
+  createEvent(data) {
+    return this._load({
+      url: `points`,
+      method: Method.POST,
+      body: JSON.stringify(data.toRAW()),
+    });
+  }
 
   updateEvent(data) {
     return this._load({
@@ -71,7 +74,6 @@ const API = class {
   }
 
   deleteEvent({id}) {
-
     return this._load({
       url: `points/${id}`,
       method: Method.DELETE,

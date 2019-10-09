@@ -4,17 +4,18 @@ import PointController from './point-controller';
 import TripEventFormNew from './trip-event-form-new';
 import {Position, EVENT_FORM_DATE_FORMAT, EVENT_TO_TEXT_MAP} from './constants.js';
 import {render, unrender} from './utils.js';
+import ModelEventLocal from './model-event-local';
 import moment from 'moment';
 import flatpickr from 'flatpickr';
 import Offers from './offers';
 
 class TripController {
-  constructor(container, events, destinations, offers, onDataChangeInTripController) {
+  constructor(container, data, onDataChangeInTripController) {
     this.onDataChangeInTripController = onDataChangeInTripController;
     this._container = container;
-    this._events = events;
-    this._destinations = destinations;
-    this._offers = offers;
+    this._events = data.events;
+    this._destinations = data.destinations;
+    this._offers = data.offers;
     this._eventsSorted = [];
     this._sort = new Sort();
     this._tripDayElements = [];
@@ -28,26 +29,24 @@ class TripController {
   // начальная инициализация
   init() {
     this._renderSort();
-    this._renderTripEventNewForm();
     this.renderDays(true);
+    const addEventBtn = document.querySelector(`.trip-main__event-add-btn`);
+    addEventBtn.addEventListener(`click`, () => {
+      this._onChangeView();
+      this._renderTripEventNewForm();
+    });
   }
 
   // рендер формы нового события
   _renderTripEventNewForm() {
     const formElement = this._tripEventFormNew.getElement();
-    const typeBtns = [...formElement.querySelectorAll(`.event__type-input`)];
-    const addEventBtn = document.querySelector(`.trip-main__event-add-btn`);
-    const cancelBtn = formElement.querySelector(`.event__reset-btn`);
-
-    // показ формы нового события по кнпке добавить новое
-    addEventBtn.addEventListener(`click`, () => {
-      this._onChangeView();
-      this._tripEventFormNew.show();
-    });
+    render(this._container, formElement, Position.AFTERBEGIN);
+    const saveBtn = formElement.querySelector(`.event__save-btn`);
 
     // скрытие формы нового события по кнопке cancel нового события
+    const cancelBtn = formElement.querySelector(`.event__reset-btn`);
     cancelBtn.addEventListener(`click`, () => {
-      this._tripEventFormNew.hide();
+      unrender(this._tripEventFormNew);
     });
 
     // обработчик выбора типа события
@@ -60,16 +59,17 @@ class TripController {
       this._offersComponent.offers = (this._offers.find((item) => item.type === eventType)).offers;
       render(formElement, this._offersComponent.getElement(), Position.BEFOREEND);
     };
+    const typeBtns = [...formElement.querySelectorAll(`.event__type-input`)];
     typeBtns.forEach((btn) => btn.addEventListener(`click`, onTypeChange));
 
     // обработчик сохранения данных нового события
     const onFormSubmit = (evt) => {
       evt.preventDefault();
+      saveBtn.setAttribute(`disabled`, true);
+      saveBtn.innerText = `saving`;
       const formData = new FormData(formElement);
       const offersChecked = formData.getAll(`event-offer`);
-      // const offers = this._offersComponent.offers.map(offer => ({...offer, isEnabled: offersChecked.includes(offer.name)}));
       const offers = this._offersComponent.offers.map((offer) => Object.assign({}, offer, {isEnabled: offersChecked.includes(offer.name)}));
-
       const destinationPoint = formData.get(`event-destination`);
       const destinationData = this._destinations.find((item) => (item.name === destinationPoint));
 
@@ -77,7 +77,7 @@ class TripController {
         type: formData.get(`event-type`),
         destinationPoint,
         description: destinationData.description,
-        pics: destinationData.pictures.map((item) => item.src),
+        pics: destinationData.pictures,
         startDate: moment(formData.get(`event-start-time`), `DD-MM-YY kk-mm`),
         endDate: moment(formData.get(`event-end-time`), `DD-MM-YY kk-mm`),
         cost: parseInt(formData.get(`event-price`), 10),
@@ -87,9 +87,9 @@ class TripController {
       };
       this._onDataChange(entry, null);
     };
+
     flatpickr(formElement.querySelectorAll(`.event__input--time`), EVENT_FORM_DATE_FORMAT);
     formElement.addEventListener(`submit`, onFormSubmit);
-    render(this._container, formElement, Position.BEFOREEND);
   }
 
   // рендер сортировки: подвешивание обработчиков
@@ -100,7 +100,7 @@ class TripController {
     render(this._container, this._sort.getElement(), Position.AFTERBEGIN);
     const sortInputs = [...this._sort._element.querySelectorAll(`.trip-sort__input`)];
     const onSortFieldClick = (evt) => {
-      const sortBy = evt.target.formDataset.sortId;
+      const sortBy = evt.target.dataset.sortId;
       this._sort._items.forEach((item) => {
         item.isEnabled = (item.name === sortBy);
       });
@@ -123,21 +123,27 @@ class TripController {
     return [...new Set(eventsDays)].sort();
   }
 
-  // рендерит разметку дней, сортировку, события в дни
+  // рендерит разметку дней, события в дни
   renderDays(isDayShow) {
     this._unrenderDays();
-    if (this._events.length > 0) {
-      this._tripEventFormNew.hide();
+    if (this._events.length === 0) {
+      this._renderTripEventNewForm();
     }
-    const days = this._getEventDays(this._events);
-    days.forEach((day, i) => {
-      const dayEvents = this._events.filter((event) => moment(event.startDate).format(`YYYY-MM-DD`) === day);
-      const tripDay = new Day(dayEvents.length, i + 1, day, isDayShow);
+    if (isDayShow) {
+      const days = this._getEventDays(this._events);
+      days.forEach((day, i) => {
+        const dayEvents = this._events.filter((event) => moment(event.startDate).format(`YYYY-MM-DD`) === day);
+        const tripDay = new Day(dayEvents.length, i + 1, day, isDayShow);
+        this._tripDayElements.push(tripDay);
+        render(this._container, tripDay.getElement(), Position.BEFOREEND);
+        this._renderDayEvents(tripDay._element, dayEvents);
+      });
+    } else {
+      const tripDay = new Day(this._events.length, 0, null, isDayShow);
       this._tripDayElements.push(tripDay);
       render(this._container, tripDay.getElement(), Position.BEFOREEND);
-      this._renderDayEvents(tripDay._element, dayEvents);
-    });
-
+      this._renderDayEvents(tripDay._element, this._eventsSorted);
+    }
   }
 
   // рендерит в контейнер "день" события дня
@@ -208,9 +214,8 @@ class TripController {
     }
 
     if (oldData === null) {
-      this._events.push(newData);
       commit.type = `create`;
-      commit.data = newData;
+      commit.data = new ModelEventLocal(newData);
     }
     this.onDataChangeInTripController(commit);
   }
