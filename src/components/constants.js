@@ -19,10 +19,9 @@ const EVENT_TO_TEXT_MAP = new Map(
 
 const EVENT_FORM_DATE_FORMAT =
   {
-    enableTime: true,
-    // eslint-disable-next-line camelcase
-    time_24hr: true,
-    dateFormat: `d/m/y H:i`,
+    'enableTime': true,
+    'time_24hr': true,
+    'dateFormat': `d/m/y H:i`,
   };
 
 const Position = {
